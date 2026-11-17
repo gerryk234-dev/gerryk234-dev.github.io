@@ -204,10 +204,10 @@ const CARDS = [
 ];
 const R = {};
 R['/'] = () => `<main id="main">
-  <section class="hero hero-earth"><div class="stars" aria-hidden="true"></div><img class="earth" src="brand/earth.jpg" srcset="brand/earth-800.jpg 800w, brand/earth.jpg 1010w" sizes="100vw" alt="" fetchpriority="high" decoding="async"><div class="shade"></div><div class="container">
-    <div class="rise">${logo('')}</div>
+  <section class="hero hero-earth"><div class="stars" aria-hidden="true"></div><div class="rays" aria-hidden="true"></div><div class="sun" aria-hidden="true"></div><div class="embers" aria-hidden="true">${Array.from({ length: 10 }, (_, i) => `<span style="--x:${i}"></span>`).join('')}</div><img class="earth" src="brand/earth.jpg" srcset="brand/earth-800.jpg 800w, brand/earth.jpg 1010w" sizes="100vw" alt="" fetchpriority="high" decoding="async"><div class="shade"></div><div class="container">
+    <div class="rise logo-wrap">${logo('')}</div>
     <div class="rise d1 kicker">Awakening Human Potential</div>
-    <h1 class="rise d2">From Analysis to Awakening</h1>
+    <h1>${['From', 'Analysis', 'to'].map((w, i) => `<span class="w" style="--i:${i}">${w}</span>`).join(' ')} <span class="w metal" style="--i:3">Awakening</span></h1>
     <p class="rise d3 lead">One purchase. Your mineral test, a chart you can read, and six months inside a calmer way of living.</p>
     <div class="rise d4 cta"><a href="#/join" class="btn lg">Join the DELTA Experience</a><a href="#/how-it-works" class="plain">How it works</a></div>
   </div></section>
@@ -1060,5 +1060,7 @@ document.addEventListener('submit', async ev => {
   finally { f.classList.remove('busy'); btns.forEach(b => b.disabled = false); }
 });
 document.addEventListener('error', ev => { if (ev.target.matches?.('.vthumb img')) ev.target.style.visibility = 'hidden'; }, true);
+let syTick = false;
+addEventListener('scroll', () => { if (syTick || reduceMotion) return; syTick = true; requestAnimationFrame(() => { document.documentElement.style.setProperty('--sy', Math.round(scrollY)); syTick = false; }); }, { passive: true });
 window.addEventListener('hashchange', () => { render(); window.scrollTo(0, 0); });
 load().then(render).catch(e => { document.getElementById('app').innerHTML = `<main class="page"><div class="narrow card"><h1>DELTA is unavailable</h1><p class="muted mt2">${esc(e.message)}. Please try again shortly.</p></div></main>`; });
