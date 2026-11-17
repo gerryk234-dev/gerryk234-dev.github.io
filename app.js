@@ -561,7 +561,7 @@ R['/laughology'] = (q = {}) => {
     <label class="f"><span>Link (videos only — share links to public videos, don't upload other people's content)</span><input type="url" name="url" placeholder="https://"></label>
     <label class="f"><span>Display name</span><input type="text" name="by" value="${esc(u.name.split(' ')[0])}"></label>
     <label class="chk"><input type="checkbox" name="anon"> Post anonymously</label>
-    <p class="xs muted">Everything is checked by a moderator before it appears. Keep it kind — see the community rules.</p><button class="btn">Submit for review</button></form></div>`);
+    <p class="xs muted">Everything is checked by our team before it appears. Keep it kind — see the community rules.</p><button class="btn">Submit for review</button></form></div>`);
 };
 
 const GROUPS = [...PILLARS.map(p => ({ id: p.id, name: p.name[0] + p.name.slice(1).toLowerCase() })), { id: 'awakening', name: 'Awakening' }, { id: 'general', name: 'Shared learning & encouragement' }];
@@ -628,7 +628,26 @@ R['/admin'] = () => {
   const purchases = m.flatMap(u => u.purchases);
   const turn = tests.filter(x => x.t.publishedAt && x.t.receivedAt).map(x => (x.t.publishedAt - x.t.receivedAt) / DAY);
   const auto = tests.filter(x => x.t.receivedAt), autoOk = auto.filter(x => !x.t.wasReviewed && !x.t.hadIssues && x.t.status === 'published');
+  const tour = [
+    ['/admin/members', 'Members', 'Every client: stage, access dates, role. Try “View as” to see the portal through their eyes.'],
+    ['/admin/upload', 'Lab upload', 'Add a lab result. Try “Load sample with problems” to see validation catch errors.'],
+    ['/admin/exceptions', 'Exceptions', 'Results that failed checks — fix the values against the lab PDF (example: Pat).'],
+    ['/admin/safety', 'Safety', 'Files held before release: medicines (Jo) and a high lead reading (Riya).'],
+    ['/admin/reports', 'Reports', 'Edit any report; Morgan’s is ready to publish.'],
+    ['/admin/analyses', 'Client charts', 'Change mineral values and watch the chart update live; add a follow-up test.'],
+    ['/admin/voice', 'Voice notes', 'Paid requests from Alex and Tom — upload audio or a written reply.'],
+    ['/admin/lessons', 'Lessons', 'Edit the six pillar lessons members see.'],
+    ['/admin/content', 'Content', 'Podcast, founder story, and the Mineral Man videos (22 awaiting your review).'],
+    ['/admin/moderation', 'Moderation', 'Approve LAUGHOLOGY submissions and handle reported posts.'],
+    ['/admin/partners', 'Partners', 'Partner Collective listings, disclosures and click counts.'],
+    ['/admin/rules', 'Rules', 'The interpretation rules — run the test cases.'],
+    ['/admin/settings', 'Settings', 'Prices, reminder days, minimum age, auto-publish.'],
+    ['/admin/audit', 'Audit log', 'Everything that happened, who did it, and every email/SMS sent.'],
+  ].filter(([to]) => canArea(to));
   return adminNav() + page(`<h1>Admin Dashboard</h1><p class="muted mt2">Manage analyses, run workflows, and review activity.</p>
+  ${S.demo ? `<details class="card hl mt6" open><summary><b>Admin tour</b> <span class="sm muted">— everything here is example data; click around freely</span></summary>
+    <div class="grid md3 mt4">${tour.map(([to, t, d]) => `<a class="inner" href="#${to}" style="text-decoration:none;color:inherit;display:block"><b class="gold sm">${t} →</b><p class="xs muted mt1">${d}</p></a>`).join('')}</div>
+    <p class="xs muted mt4">Tips: use <b>Demo tools → +30 days</b> to trigger renewal reminders and expiries · <b>Switch user</b> to sign in as any client · the <b>✦ assistant</b> (bottom right) answers “what’s waiting?” · <b>Reset demo</b> restores all examples.</p></details>` : ''}
   <div class="grid md4 mt8">${[['Members', m.length], ['Active', m.filter(u => hasAccess(u)).length], ['Lab reports', tests.filter(x => x.t.receivedAt).length], ['HTMA analyses', tests.filter(x => x.t.generatedAt).length],
     ['Revenue (demo)', money(purchases.reduce((a, p) => a + p.amount, 0))], ['Renewals due', m.filter(u => memberStatus(u) === 'renewal_due').length], ['Expired', m.filter(u => memberStatus(u) === 'expired').length], ['Avg turnaround', turn.length ? (turn.reduce((a, b) => a + b, 0) / turn.length).toFixed(1) + ' d' : '—'],
     ['Automation success', auto.length ? Math.round(autoOk.length / auto.length * 100) + '%' : '—'], ['Voice-note requests', S.voiceNotes.filter(v => v.status === 'requested').length], ['Partner clicks', S.partners.reduce((a, p) => a + (p.clicks || 0), 0)], ['Lessons completed', m.reduce((a, u) => a + u.lessonsDone.length, 0)]]
@@ -643,7 +662,7 @@ R['/admin/members'] = () => adminNav() + page(`<h1>Members</h1><p class="muted m
   <div class="tablewrap mt6"><table><thead><tr><th>Member</th><th>Details</th><th>Status</th><th>Sample / workflow</th><th>Role</th><th>Expires</th><th>Tests</th><th>Actions</th></tr></thead><tbody>
   ${S.users.map(u => { const t = latestTest(u); return `<tr><td>${esc(u.name)}<div class="xs muted">${esc(u.email)}</div></td><td class="xs muted">${esc(u.phone || '—')}<br>${esc(u.nationality || '—')}${u.dob ? ` · age ${ageOf(u)}` : ''}<br>${(u.signIn || []).filter(m => m !== 'email').map(m => PROVIDER[m] || m).join(', ')}</td><td>${u.role === 'member' ? badge(memberStatus(u)) : '<span class="xs muted">staff</span>'}</td>
     <td>${t ? `<select class="mini" data-act="set-stage" data-id="${u.id}">${STAGES.slice(2).map(([k, l]) => `<option value="${k}" ${t.status === k ? 'selected' : ''}>${l}</option>`).join('')}</select>${!u.intake?.complete ? '<div class="xs gold">intake pending</div>' : ''}` : '—'}</td>
-    <td><select class="mini" data-act="set-role" data-id="${u.id}" ${S.role === 'admin' ? '' : 'disabled'}>${['member', 'practitioner', 'moderator', 'support', 'admin'].map(r => `<option ${u.role === r ? 'selected' : ''}>${r}</option>`).join('')}</select></td>
+    <td><select class="mini" data-act="set-role" data-id="${u.id}" ${S.role === 'admin' ? '' : 'disabled'}>${['member', 'practitioner', 'admin'].map(r => `<option ${u.role === r ? 'selected' : ''}>${r}</option>`).join('')}</select></td>
     <td>${u.role === 'member' ? `<input type="date" class="mini" data-act="set-expiry" data-id="${u.id}" value="${u.expiresAt ? new Date(u.expiresAt).toISOString().slice(0, 10) : ''}">` : '—'}</td>
     <td class="xs">${u.tests.length}</td>
     <td>${t && t.status === 'sample_pending' && u.intake?.complete ? `<button class="btn ghost xs" data-act="sample-received" data-id="${u.id}">Sample received</button>` : ''} ${u.role === 'member' && S.demo && S.role === 'admin' ? `<button class="linkbtn xs" data-act="impersonate" data-id="${u.id}">View as</button>` : ''}</td></tr>`; }).join('')}
@@ -814,9 +833,9 @@ function render() {
   else if (parts[0] === 'community') html = R['/community'](q, parts);
   else if (parts[0] === 'pay') html = payPage(parts[1]);
   else html = R[path] ? R[path](q, parts) : notFound();
-  document.getElementById('app').innerHTML = responsiveImages(`<a class="skip" href="#main" data-act="skip">Skip to content</a>${demobar()}${header()}${html}${footer()}`);
+  document.getElementById('app').innerHTML = responsiveImages(`<a class="skip" href="#main" data-act="skip">Skip to content</a>${demobar()}${header()}${html}${footer()}${aiWidget(path)}`);
   document.title = 'DELTA — Awakening Human Potential';
-  const log = document.getElementById('chatlog'); if (log) log.scrollTop = log.scrollHeight;
+  for (const id of ['chatlog', 'ailog']) { const log = document.getElementById(id); if (log) log.scrollTop = log.scrollHeight; }
   enhance(path);
   onRoute(path, q);
 }
@@ -827,6 +846,20 @@ function responsiveImages(markup) {
     const hero = first && markup.indexOf(m) < markup.indexOf('</section>') && markup.includes('class="hero"'); first = false;
     return `<img src="brand/${name}.jpg" srcset="brand/${name}-800.jpg 800w, brand/${name}.jpg 1400w" sizes="${hero ? '100vw' : '(min-width: 768px) 50vw, 100vw'}" decoding="async" ${hero ? 'fetchpriority="high"' : 'loading="lazy"'}`;
   });
+}
+/* Floating AI assistant (staff with assistant access), bottom-right on every screen. */
+let aiOpen = false;
+function aiWidget(path) {
+  const u = me();
+  if (!u || !isStaff(u) || !canArea('/admin/assistant') || path === '/admin/assistant') return '';
+  const chips = ['What is waiting for me today?', 'Who is due to renew?', 'Summarise recent activity', 'Publish ready reports'];
+  return `<button class="fab ${aiOpen ? 'on' : ''}" data-act="ai-toggle" aria-expanded="${aiOpen}" aria-controls="ai-drawer" aria-label="${aiOpen ? 'Close' : 'Open'} AI assistant"><span aria-hidden="true">${aiOpen ? '✕' : '✦'}</span></button>
+  <section class="ai-drawer ${aiOpen ? 'open' : ''}" id="ai-drawer" aria-label="AI assistant" ${aiOpen ? '' : 'hidden'}>
+    <header><b>✦ DELTA assistant</b><span class="xs muted">Works only from DELTA's own records · no clinical decisions</span></header>
+    <div class="log" id="ailog">${chatLog.map(m => `<div class="msg ${m.role === 'user' ? 'user' : 'bot'}">${esc(m.text)}</div>`).join('') || '<p class="sm muted">Hi! I can list what\'s waiting, show renewals, summarise activity or publish reports that are ready.</p>'}</div>
+    <div class="chips" style="padding:0 .75rem .5rem">${chips.map(c => `<button class="chip" data-act="ai-ask" data-q="${esc(c)}">${esc(c)}</button>`).join('')}</div>
+    <form data-form="assistant" class="ai-form"><input type="text" name="q" placeholder="Ask the assistant…" autocomplete="off" aria-label="Message"><button class="btn xs">Send</button></form>
+  </section>`;
 }
 /* Progressive enhancement after each render: responsive images, fade-ins, scroll reveals, focus & title. */
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -861,20 +894,20 @@ function toast(msg) {
   setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 350); }, 4200);
 }
 /* In-page dialog (native confirm/prompt and downloads are blocked in sandboxed hosts). */
-function dialog({ title, body = '', input = null, value = '', ok = 'OK', onOk, wide = false }) {
+function dialog({ title, body = '', input = null, value = '', ok = 'OK', onOk, wide = false, fields = null }) {
   document.querySelectorAll('[data-dialog]').forEach(x => x.remove());
   const d = document.createElement('div');
   d.dataset.dialog = '1';
   d.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.6);display:grid;place-items:center;z-index:300;padding:1rem';
   d.innerHTML = `<form class="card stack" style="width:100%;max-width:${wide ? '44rem' : '28rem'}" role="dialog" aria-modal="true" aria-label="${esc(title)}"><h2 class="gold">${esc(title)}</h2>${body ? `<p class="sm muted">${esc(body)}</p>` : ''}
-    ${input === 'textarea' ? `<textarea class="code" rows="14" readonly>${esc(value)}</textarea>` : input ? `<input type="text" required value="${esc(value)}" aria-label="${esc(title)}">` : ''}
+    ${fields ? fields.map(f => `<label class="f"><span>${esc(f.label)}</span><input type="${f.type || 'text'}" name="${esc(f.name)}" required value="${esc(f.value || '')}"></label>`).join('') : input === 'textarea' ? `<textarea class="code" rows="14" readonly>${esc(value)}</textarea>` : input ? `<input type="text" required value="${esc(value)}" aria-label="${esc(title)}">` : ''}
     <div class="flex">${onOk ? `<button class="btn">${esc(ok)}</button>` : ''}${input === 'textarea' ? '<button type="button" class="btn ghost" data-copy>Copy</button><button type="button" class="btn ghost" data-dl>Download</button>' : ''}<button type="button" class="btn ghost" data-close>${onOk ? 'Cancel' : 'Close'}</button></div></form>`;
   const close = () => d.remove();
   d.querySelector('[data-close]').onclick = close;
   d.addEventListener('click', e => { if (e.target === d) close(); });
   d.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
   const f = d.querySelector('form');
-  f.addEventListener('submit', e => { e.preventDefault(); e.stopPropagation(); const i = f.querySelector('input'); close(); onOk && onOk(i ? i.value.trim() : true); });
+  f.addEventListener('submit', e => { e.preventDefault(); e.stopPropagation(); const i = f.querySelector('input'); close(); onOk && onOk(fields ? Object.fromEntries([...f.querySelectorAll('input')].map(x => [x.name, x.value.trim()])) : i ? i.value.trim() : true); });
   document.body.appendChild(d);
   (f.querySelector('input,textarea,button') || f).focus();
   return d;
@@ -906,7 +939,7 @@ const A = {
   love(el) { act('love', { id: el.dataset.id }).then(r => r && load().then(render)); },
   'report-laugh'(el) { act('report-laugh', { id: el.dataset.id }); },
   'post-love'(el) { act('post-love', { id: el.dataset.id }).then(r => r && load().then(render)); },
-  'post-report'(el) { dialog({ title: 'Report this post', body: 'Tell the moderators what concerns you.', input: 'text', ok: 'Report', onOk: reason => act('post-report', { id: el.dataset.id, reason }) }); },
+  'post-report'(el) { dialog({ title: 'Report this post', body: 'Tell our team what concerns you.', input: 'text', ok: 'Report', onOk: reason => act('post-report', { id: el.dataset.id, reason }) }); },
   consent(el) { act('consent', { k: el.dataset.k, v: el.checked }); },
   export() { act('export', {}, { refresh: false }); },
   'delete-request'() { dialog({ title: 'Request deletion?', body: 'Our team will confirm what can be deleted under the retention policy.', ok: 'Send request', onOk: () => act('delete-request') }); },
@@ -946,7 +979,15 @@ const A = {
     const r = await act('run-tests', {}, { refresh: false }); if (!r) return;
     document.getElementById('test-out').innerHTML = r.results.map(c => `<div class="sm ${c.pass ? 'b-ok' : 'b-bad'}">${c.pass ? '✓' : '✕'} ${esc(c.name)} — expected [${c.expect.join(', ')}], got [${c.got.join(', ')}]</div>`).join('');
   },
-  'social-off'(el) { toast(`${el.dataset.p} sign-in will work once DELTA's ${el.dataset.p} developer keys are added. Please use email for now.`); },
+  'ai-toggle'() { aiOpen = !aiOpen; render(); if (aiOpen) document.querySelector('#ai-drawer input')?.focus(); },
+  'ai-ask'(el) { const f = document.querySelector('#ai-drawer form'); f.q.value = el.dataset.q; f.requestSubmit(); },
+  'social-off'(el) {
+    const p = el.dataset.p, key = p.toLowerCase();
+    const sample = { google: ['Jamie Rivers', 'jamie.rivers@gmail.com'], apple: ['Alex Kim', 'alex.kim@icloud.com'], microsoft: ['Sam Lee', 'sam.lee@outlook.com'] }[key];
+    dialog({ title: `Continue with ${p} (demo)`, body: `On the live site this opens ${p}'s secure sign-in page, where the person picks their account — no form to fill in. In this demo, choose the ${p} account to use:`,
+      fields: [{ name: 'name', label: 'Name on the account', value: sample[0] }, { name: 'email', label: `${p} email`, value: sample[1], type: 'email' }], ok: `Continue with ${p}`,
+      onOk: v => act('demo-social', { provider: key, ...v }) });
+  },
   'resend-verification'() { act('resend-verification', {}, { refresh: false }); },
   'pay-test'(el) { el.disabled = true; act('pay-test', { orderId: el.dataset.id }).finally(() => { el.disabled = false; }); },
 };
@@ -991,7 +1032,7 @@ const F = {
     chatLog.push({ role: 'user', text: q });
     const r = await act('assistant', { q }, { refresh: false });
     chatLog.push({ role: 'bot', text: r ? r.reply : 'Sorry — that request failed.' });
-    await load(); render();
+    await load(); render(); document.querySelector('#ai-drawer input')?.focus();
   },
 };
 
