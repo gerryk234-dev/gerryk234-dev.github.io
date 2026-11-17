@@ -204,7 +204,7 @@ const CARDS = [
 ];
 const R = {};
 R['/'] = () => `<main id="main">
-  <section class="hero"><img src="brand/space.jpg" alt=""><div class="shade"></div><div class="container">
+  <section class="hero hero-earth"><div class="stars" aria-hidden="true"></div><img class="earth" src="brand/earth.jpg" srcset="brand/earth-800.jpg 800w, brand/earth.jpg 1010w" sizes="100vw" alt="" fetchpriority="high" decoding="async"><div class="shade"></div><div class="container">
     <div class="rise">${logo('')}</div>
     <div class="rise d1 kicker">Awakening Human Potential</div>
     <h1 class="rise d2">From Analysis to Awakening</h1>
