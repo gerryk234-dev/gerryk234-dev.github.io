@@ -486,7 +486,12 @@ R['/portal'] = () => {
     <div class="card"><h2 class="gold">Membership</h2><p class="sm muted mt2">Status: ${STATUS_BADGE[st][0]}</p><p class="sm muted">Sample: ${stageLabel(stage)}</p><p class="sm muted">Access until: ${fmtDate(u.expiresAt)}</p><div class="mt4">${pipelineHTML(u, t)}</div></div>
     ${!u.intake?.complete ? `<div class="card hl"><h2>Complete your intake</h2><p class="sm muted mt2">Safety questions come before the hair-sample instructions. Personal programme notes stay held if a review is needed.</p><a href="#/intake" class="btn mt4">Start intake</a></div>`
       : stage === 'sample_pending' ? `<div class="card hl"><h2>Send your hair sample</h2><ol class="sm muted mt3" style="padding-left:1.2rem"><li>Wash hair with a plain shampoo 24 hours before sampling (no conditioner).</li><li>Cut a small sample from the nape of the neck, close to the scalp.</li><li>Place it in the provided envelope and post it to our laboratory.</li><li>We will update your portal once the sample is received and results are ready.</li></ol><button class="btn ghost xs mt4" data-act="sample-sent">I've posted my sample</button></div>`
-      : ['lab_processing', 'validation_needed', 'ready_to_publish'].includes(stage) ? `<div class="card"><h2>Your sample is with the laboratory</h2><p class="sm muted mt2">${stage === 'validation_needed' ? 'Our team is double-checking your laboratory data before your report is prepared.' : stage === 'ready_to_publish' ? 'Your report is prepared and will be released shortly.' : "We'll notify you as soon as your results are processed."}</p></div>`
+      : ''}
+    ${u.intake?.complete && ['sample_pending', 'lab_processing'].includes(stage) ? `<form class="card dropzone" data-form="member-upload"><h2>Already have your lab report?</h2><p class="sm muted mt2">Upload the PDF or CSV from the laboratory and we'll fill your results in automatically. A guide checks every value against the original before your report is released.</p>
+      <p class="form-error mt2" role="alert" tabindex="-1" hidden></p>
+      <label class="f mt3"><span>Lab report (PDF or CSV)</span><input type="file" name="file" accept=".pdf,.csv,application/pdf,text/csv" required></label>
+      <div class="flex mt3"><button class="btn xs">Upload and read my report</button>${S.demo ? `<a class="xs" href="samples/lab-report-grace-kim.pdf" target="_blank" rel="noopener">Demo: sample report for Grace Kim</a>` : ''}</div></form>` : ''}
+    ${!u.intake?.complete || stage === 'sample_pending' ? '' : ['lab_processing', 'validation_needed', 'ready_to_publish'].includes(stage) ? `<div class="card"><h2>Your sample is with the laboratory</h2><p class="sm muted mt2">${stage === 'validation_needed' ? 'Our team is double-checking your laboratory data before your report is prepared.' : stage === 'ready_to_publish' ? 'Your report is prepared and will be released shortly.' : "We'll notify you as soon as your results are processed."}</p></div>`
       : stage === 'safety_review' ? `<div class="card hl"><h2>A guide is reviewing your file</h2><p class="sm muted mt2">Your results are in. Because of something in your intake or results, a guide reviews your file before your report and any personal programme are released. General lessons stay available.</p></div>` : ''}
     ${rep ? `${rangeChart(rep.minerals)}${pub.length > 1 ? progressChart(snapsOf(u)) : '<p class="sm muted">A second test will add a progress chart showing how each mineral moved.</p>'}
       <div class="card"><h2 class="gold">Mineral Intelligence</h2><p class="sm mt2">${esc(rep.sections.notes)}</p>
@@ -659,6 +664,11 @@ R['/admin'] = () => {
 };
 
 R['/admin/members'] = () => adminNav() + page(`<h1>Members</h1><p class="muted mt2">Membership status, sample workflow and roles. Every manual change is written to the audit log.</p>
+  ${S.role === 'admin' ? `<details class="card mt6"><summary><b class="gold">Import clients from a CSV</b> <span class="sm muted">— create profiles automatically</span></summary>
+    <form class="stack mt4" data-form="import-members"><p class="sm muted">Columns: <span class="mono">name, email, phone, nationality, date of birth</span> (any order, header row required). Existing emails are skipped; every row is checked like a normal sign-up.</p>
+      <p class="form-error" role="alert" tabindex="-1" hidden></p>
+      <label class="f"><span>CSV file</span><input type="file" name="csv" accept=".csv,text/csv" required></label>
+      <div class="flex"><button class="btn xs">Import clients</button><a class="xs" href="samples/clients-import-sample.csv" target="_blank" rel="noopener">Download a sample CSV</a></div></form></details>` : ''}
   <div class="tablewrap mt6"><table><thead><tr><th>Member</th><th>Details</th><th>Status</th><th>Sample / workflow</th><th>Role</th><th>Expires</th><th>Tests</th><th>Actions</th></tr></thead><tbody>
   ${S.users.map(u => { const t = latestTest(u); return `<tr><td>${esc(u.name)}<div class="xs muted">${esc(u.email)}</div></td><td class="xs muted">${esc(u.phone || '—')}<br>${esc(u.nationality || '—')}${u.dob ? ` · age ${ageOf(u)}` : ''}<br>${(u.signIn || []).filter(m => m !== 'email').map(m => PROVIDER[m] || m).join(', ')}</td><td>${u.role === 'member' ? badge(memberStatus(u)) : '<span class="xs muted">staff</span>'}</td>
     <td>${t ? `<select class="mini" data-act="set-stage" data-id="${u.id}">${STAGES.slice(2).map(([k, l]) => `<option value="${k}" ${t.status === k ? 'selected' : ''}>${l}</option>`).join('')}</select>${!u.intake?.complete ? '<div class="xs gold">intake pending</div>' : ''}` : '—'}</td>
@@ -675,8 +685,10 @@ R['/admin/upload'] = (q = {}) => {
   ${ready.length ? `<form class="card stack mt8" data-form="upload">
     <label class="f"><span>Client</span><select name="u">${ready.map(x => `<option value="${x.u.id}" ${x.u.id === sel ? 'selected' : ''}>${esc(x.u.name)} — ${stageLabel(x.t.status)} (ordered ${fmtDate(x.t.created)})</option>`).join('')}</select></label>
     <label class="f"><span>Name as printed on the lab report</span><input type="text" name="name" value="${esc(user(sel)?.name || '')}" required></label>
-    <label class="f"><span>Lab report PDF (stored with the record; text extraction would populate the box below)</span><input type="file" name="pdf" accept="application/pdf"></label>
-    <label class="f"><span>Extracted / imported values — one per line: <span class="mono">Symbol, value, unit</span></span><textarea class="code" name="data" rows="10" required>${esc(Domain.demoLab())}</textarea></label>
+    <div class="dropzone"><label class="f"><span><b class="gold">Lab report — PDF or CSV</b> · the values and patient name are read in automatically below</span><input type="file" name="pdf" accept=".pdf,.csv,application/pdf,text/csv" data-act="read-doc"></label>
+      <p class="xs muted mt2">Try it: <a href="samples/lab-report-lee-chen.pdf" target="_blank" rel="noopener">sample lab report (PDF)</a> · <a href="samples/lab-results-lee-chen.csv" target="_blank" rel="noopener">sample results (CSV)</a> — both for Lee Chen.</p>
+      <div id="doc-summary" class="mt2" aria-live="polite"></div></div>
+    <label class="f"><span>Values — one per line: <span class="mono">Symbol, value, unit</span> (filled in from the document; you can correct them)</span><textarea class="code" name="data" rows="10" required>${esc(Domain.demoLab())}</textarea></label>
     <div class="flex"><button type="button" class="btn ghost xs" data-act="fill-lab" data-k="clean">Load clean sample</button><button type="button" class="btn ghost xs" data-act="fill-lab" data-k="issues">Load sample with problems</button><button type="button" class="btn ghost xs" data-act="fill-lab" data-k="toxic">Load sample with toxic flag</button></div>
     <button class="btn">Validate & process</button></form>` : '<div class="card mt8 muted">No clients are waiting for results. Mark a sample as received on the <a href="#/admin/members">Members</a> page.</div>'}`, 'mid');
 };
@@ -981,6 +993,20 @@ const A = {
   },
   'ai-toggle'() { aiOpen = !aiOpen; render(); if (aiOpen) document.querySelector('#ai-drawer input')?.focus(); },
   'ai-ask'(el) { const f = document.querySelector('#ai-drawer form'); f.q.value = el.dataset.q; f.requestSubmit(); },
+  async 'read-doc'(el) {
+    const box = document.getElementById('doc-summary'), f = el.files[0]; if (!f) return;
+    box.innerHTML = '<p class="sm muted">Reading ' + esc(f.name) + '…</p>';
+    const r = await act('read-document', { file: await fileToB64(f) }, { refresh: false });
+    if (!r) { box.innerHTML = `<p class="sm b-bad">${esc(lastError || 'Could not read that file.')}</p>`; return; }
+    const x = r.extract, form = el.form;
+    form.data.value = x.lines || '';
+    if (x.name) form.name.value = x.name;
+    if (x.name) { const m = [...form.u.options].find(o => o.textContent.toLowerCase().startsWith(x.name.toLowerCase())); if (m) form.u.value = m.value; }
+    box.innerHTML = `<div class="inner sm"><b class="gold">Read ${x.found.length} value${x.found.length === 1 ? '' : 's'} from ${esc(f.name)}</b>${x.name ? ` · patient <b>${esc(x.name)}</b>` : ''}
+      ${x.missing.length ? `<div class="xs muted mt1">Not found in the document: ${x.missing.map(esc).join(', ')}</div>` : ''}
+      ${(x.notes || []).map(n => `<div class="xs b-warn mt1">⚠ ${esc(n)}</div>`).join('')}
+      <div class="xs muted mt1">Check the values below, then press <b>Validate & process</b>.</div></div>`;
+  },
   'social-off'(el) {
     const p = el.dataset.p, key = p.toLowerCase();
     const sample = { google: ['Jamie Rivers', 'jamie.rivers@gmail.com'], apple: ['Alex Kim', 'alex.kim@icloud.com'], microsoft: ['Sam Lee', 'sam.lee@outlook.com'] }[key];
@@ -997,6 +1023,13 @@ const obj = d => Object.fromEntries(d.entries());
 const F = {
   join(f, d) { const b = obj(d); return act('checkout', { ...b, voice: !!b.voice, terms: !!b.terms, marketing: !!b.marketing }); },
   'login-email'(f, d) { return act('login-request', { email: d.get('email') }, { refresh: false }).then(r => { if (r) { loginSent = d.get('email'); render(); } }); },
+  async 'member-upload'(f, d) { const file = await fileToB64(d.get('file')); return act('member-upload', { file }); },
+  async 'import-members'(f, d) {
+    const file = d.get('csv'); if (!file || !file.size) return;
+    const r = await act('import-members', { csv: await file.text() }, { refresh: true });
+    if (r?.report) dialog({ title: 'CSV import results', body: r.report.map(x => `${x.email}: ${x.result}`).join('\n') });
+    return r;
+  },
   register(f, d) { const b = obj(d); return act('register', { ...b, terms: !!b.terms, marketing: !!b.marketing }); },
   profile(f, d) { return act('profile', obj(d)); },
   intake(f, d) { const b = obj(d); return act('intake', { ...b, edu: !!b.edu, consent: !!b.consent }); },
@@ -1046,7 +1079,7 @@ document.addEventListener('click', ev => {
 });
 document.addEventListener('change', ev => {
   const el = ev.target.closest('[data-act]'); if (!el) return;
-  if (el.tagName === 'SELECT' || el.type === 'checkbox' || el.type === 'date') { const fn = A[el.dataset.act]; if (fn) fn(el, ev); }
+  if (el.tagName === 'SELECT' || el.type === 'checkbox' || el.type === 'date' || el.type === 'file') { const fn = A[el.dataset.act]; if (fn) fn(el, ev); }
 });
 document.addEventListener('input', ev => { const el = ev.target; if (el.dataset?.act === 'chart-input') A['chart-input'](el); });
 document.addEventListener('submit', async ev => {

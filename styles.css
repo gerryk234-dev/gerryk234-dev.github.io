@@ -497,3 +497,8 @@ nav.main a { font-size: .9rem; font-weight: 500; white-space: nowrap; }
 .hero-earth h1 .metal { position: relative; }
 .card h3.gold[style], .card h2[style] { font-weight: 600 !important; }
 .card h3.gold { background: var(--metal); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+.dropzone { border: 1px dashed rgba(227,179,65,.45); border-radius: var(--radius); padding: 1rem; background: rgba(227,179,65,.04); }
+form.card.dropzone { border-style: dashed; }
+input[type=file] { width: 100%; margin-top: .3rem; font: inherit; font-size: .85rem; color: var(--muted); padding: .5rem; border: 1px solid var(--border); border-radius: .5rem; background: rgba(5,8,19,.5); }
+input[type=file]::file-selector-button { font: 600 .8rem var(--display); margin-right: .75rem; padding: .45rem .9rem; border-radius: 999px; border: 1px solid rgba(227,179,65,.5); background: rgba(227,179,65,.12); color: var(--gold-soft); cursor: pointer; }
