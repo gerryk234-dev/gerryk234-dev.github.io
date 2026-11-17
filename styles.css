@@ -502,3 +502,13 @@ nav.main a { font-size: .9rem; font-weight: 500; white-space: nowrap; }
 form.card.dropzone { border-style: dashed; }
 input[type=file] { width: 100%; margin-top: .3rem; font: inherit; font-size: .85rem; color: var(--muted); padding: .5rem; border: 1px solid var(--border); border-radius: .5rem; background: rgba(5,8,19,.5); }
 input[type=file]::file-selector-button { font: 600 .8rem var(--display); margin-right: .75rem; padding: .45rem .9rem; border-radius: 999px; border: 1px solid rgba(227,179,65,.5); background: rgba(227,179,65,.12); color: var(--gold-soft); cursor: pointer; }
+
+.proposal { border: 1px solid rgba(227,179,65,.5); background: rgba(227,179,65,.07); border-radius: .75rem; padding: .7rem .8rem; margin: -.3rem 0 .8rem; max-width: 92%; }
+.proposal.done { border-color: rgba(111,207,151,.5); background: rgba(111,207,151,.06); }
+.proposal.cancelled, .proposal.failed { opacity: .75; }
+.msg a { color: var(--gold-soft); }
+.ai-drawer { background: linear-gradient(180deg, #0f1730, #090e1d); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+.ai-drawer .msg.bot { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.06); }
+.proposal { background: linear-gradient(180deg, rgba(60,44,14,.55), rgba(20,22,34,.9)); }
+.fab { background: var(--metal); }
+.fab.on { background: #0f1730; }

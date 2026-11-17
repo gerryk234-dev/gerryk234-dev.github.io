@@ -802,7 +802,8 @@ R['/admin/settings'] = () => adminNav() + page(`<h1>Settings</h1><p class="muted
   <form class="card stack mt6" data-form="settings">
     <div class="grid md2"><label class="f"><span>DELTA Experience price (£)</span><input type="number" step="0.01" name="price" value="${S.settings.price}"></label><label class="f"><span>Voice note price (£)</span><input type="number" step="0.01" name="voicePrice" value="${S.settings.voicePrice}"></label>
     <label class="f"><span>Voice note question limit</span><input type="number" name="voiceQuestions" min="1" max="10" value="${S.settings.voiceQuestions}"></label><label class="f"><span>Voice note turnaround (shown to clients)</span><input type="text" name="voiceTurnaround" value="${esc(S.settings.voiceTurnaround)}"></label>
-    <label class="f"><span>Renewal reminders — days before expiry (comma separated)</span><input type="text" name="reminderDays" value="${S.settings.reminderDays.join(', ')}"></label><label class="f"><span>Access per qualifying test</span><input type="text" value="${S.settings.accessMonths} months" disabled></label></div>
+    <label class="f"><span>Renewal reminders — days before expiry (comma separated)</span><input type="text" name="reminderDays" value="${S.settings.reminderDays.join(', ')}"></label><label class="f"><span>Access per qualifying test</span><input type="text" value="${S.settings.accessMonths} months" disabled></label>
+    <label class="f"><span>Minimum age to register</span><input type="number" name="minAge" min="16" max="99" value="${S.settings.minAge ?? 18}"></label></div>
     <label class="chk"><input type="checkbox" name="autoPublish" ${S.settings.autoPublish ? 'checked' : ''}> Auto-publish reports that pass validation and need no safety review</label>
     <button class="btn">Save settings</button></form>`, 'mid');
 
@@ -810,27 +811,10 @@ R['/admin/audit'] = () => adminNav() + page(`<div class="flex between"><h1>Audit
   <div class="tablewrap mt6"><table><thead><tr><th>When</th><th>Who</th><th>Action</th><th>Details</th></tr></thead><tbody>${S.audit.map(a => `<tr><td class="xs">${fmtDT(a.at)}</td><td class="xs">${esc(a.actor)}</td><td>${esc(a.action)}</td><td class="sm muted">${esc(a.details)}</td></tr>`).join('')}</tbody></table></div>
   <h2 class="mt8">Communications sent</h2><div class="tablewrap mt3"><table><thead><tr><th>When</th><th>To</th><th>Channel</th><th>Message</th><th>Status</th></tr></thead><tbody>${S.outbox.slice(0, 60).map(o => `<tr><td class="xs">${fmtDT(o.at)}</td><td>${esc(o.to)}</td><td class="xs">${o.channel}</td><td class="sm">${esc(o.title)}</td><td class="xs">${esc(o.status || '')}</td></tr>`).join('')}</tbody></table></div>`);
 
-R['/admin/assistant'] = () => adminNav() + page(`<h1>AI Assistant</h1><p class="muted mt2">A workflow helper grounded only in DELTA's own records. It can summarise activity and run routine, already-approved workflow steps. It cannot clear safety reviews, change interpretations or make clinical decisions, and no identifiable health data is sent to a third-party AI provider in this prototype.</p>
-  <div class="card flush chat mt6"><div class="log" id="chatlog">${chatLog.map(m => `<div class="msg ${m.role === 'user' ? 'user' : 'bot'}">${esc(m.text)}</div>`).join('') || '<p class="sm muted">Ask me to publish ready results, summarise activity, list what\'s waiting, or show who is due to renew. Every request is logged.</p>'}</div>
-  <form data-form="assistant"><input type="text" name="q" placeholder="e.g. What is waiting for me today?" autocomplete="off"><button class="btn">Send</button></form></div>`, 'mid');
+R['/admin/assistant'] = () => adminNav() + page(`<h1>AI Assistant</h1><p class="muted mt2">${S.assistant === 'claude' ? 'Powered by Claude. ' : 'Offline mode — add an Anthropic API key on the server to switch on Claude. '}It knows every DELTA page and rule, reads live queues, clients and content, and prepares changes you confirm. It never makes clinical decisions${S.assistant === 'claude' ? ', and client health values are only shared with it if that setting is switched on' : ''}. Every question is logged.</p>
+  <div class="card flush chat mt6"><div class="log" id="chatlog">${chatHTML('Try: “What is waiting for me today?”, “Tell me about Jo Rivera”, “Set the voice note price to £50”, “Publish Morgan\'s report”, “Mark Grace\'s sample received”.')}</div>
+  <form data-form="assistant"><input type="text" name="q" placeholder="Ask, or tell me what to change…" autocomplete="off"><button class="btn">Send</button></form></div>`, 'mid');
 
-function assistantReply(q) {
-  const s = q.toLowerCase(), tests = allTests();
-  const by = st => tests.filter(x => x.t.status === st).map(x => x.u.name);
-  if (/clear|approve.*safety|diagnos|dose|prescri/.test(s)) return 'I can\'t do that. Safety reviews, doses and clinical judgements must be made by an authorised person on the Safety page.';
-  if (/publish/.test(s)) {
-    const ready = tests.filter(x => x.t.status === 'ready_to_publish');
-    ready.forEach(x => publish(x.u, x.t, 'AI Assistant'));
-    return ready.length ? `Published ${ready.length} report(s) that had already passed validation and safety: ${ready.map(x => x.u.name).join(', ')}.` : 'There are no reports in "Ready to publish". Items in safety review or the exception queue need a person.';
-  }
-  if (/renew|expir/.test(s)) {
-    const due = members().filter(u => memberStatus(u) === 'renewal_due'), exp = members().filter(u => memberStatus(u) === 'expired');
-    return `Renewal due: ${due.map(u => `${u.name} (${fmtDate(u.expiresAt)})`).join(', ') || 'none'}.\nExpired: ${exp.map(u => u.name).join(', ') || 'none'}.\nReminders are sent automatically at ${S.settings.reminderDays.join(' and ')} days.`;
-  }
-  if (/wait|queue|today|todo|to do/.test(s)) return `Exceptions: ${by('validation_needed').join(', ') || 'none'}\nSafety review: ${by('safety_review').join(', ') || 'none'}\nReady to publish: ${by('ready_to_publish').join(', ') || 'none'}\nLab processing (upload needed): ${by('lab_processing').join(', ') || 'none'}\nVoice notes: ${S.voiceNotes.filter(v => v.status === 'requested').length} requested\nModeration: ${S.laughs.filter(l => l.status === 'pending').length} submissions, ${S.posts.filter(p => p.reported && !p.removed).length} reports`;
-  if (/summar|activity|happen/.test(s)) return 'Latest activity:\n' + S.audit.slice(0, 8).map(a => `• ${a.action} — ${a.details}`).join('\n');
-  return 'I can: list what\'s waiting, publish ready reports, summarise recent activity, or show renewals and expiries.';
-}
 
 function notFound() { return page(`<h1>Page not found</h1><p class="mt4"><a href="#/">Go home</a></p>`, 'narrow'); }
 
@@ -859,16 +843,25 @@ function responsiveImages(markup) {
     return `<img src="brand/${name}.jpg" srcset="brand/${name}-800.jpg 800w, brand/${name}.jpg 1400w" sizes="${hero ? '100vw' : '(min-width: 768px) 50vw, 100vw'}" decoding="async" ${hero ? 'fetchpriority="high"' : 'loading="lazy"'}`;
   });
 }
-/* Floating AI assistant (staff with assistant access), bottom-right on every screen. */
+/* Assistant chat: light formatting (bold, line breaks, in-app links) on escaped text, plus change cards. */
+const fmtChat = t => esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/(#\/[\w\-/?=&%]+)/g, '<a href="$1">$1</a>').replace(/\n/g, '<br>');
+function chatHTML(emptyText) {
+  return chatLog.map((m, i) => `<div class="msg ${m.role === 'user' ? 'user' : 'bot'}">${m.role === 'user' ? esc(m.text) : fmtChat(m.text)}</div>${(m.proposals || []).map((p, j) => `<div class="proposal ${p.state || ''}"><div class="sm"><b>Proposed change:</b> ${esc(p.summary)}</div>${p.state === 'done' ? '<div class="xs b-ok mt1">✓ Done</div>' : p.state === 'cancelled' ? '<div class="xs muted mt1">Cancelled</div>' : p.state === 'failed' ? `<div class="xs b-bad mt1">✕ ${esc(p.error || 'Failed')}</div>` : `<div class="flex mt2"><button class="btn xs" data-act="ai-confirm" data-m="${i}" data-p="${j}">Confirm</button><button class="btn ghost xs" data-act="ai-cancel" data-m="${i}" data-p="${j}">Cancel</button></div>`}</div>`).join('')}`).join('') || `<p class="sm muted">${emptyText}</p>`;
+}
+const pageContext = () => { const m = document.getElementById('main'); return { path: location.hash.slice(1) || '/', title: m?.querySelector('h1')?.textContent.trim() || '', text: (m?.innerText || '').replace(/\n{2,}/g, '\n').slice(0, 7000) }; };
+
+/* Floating AI assistant, bottom-right on every screen — staff get admin help; members and visitors get answers about DELTA. */
 let aiOpen = false;
 function aiWidget(path) {
   const u = me();
-  if (!u || !isStaff(u) || !canArea('/admin/assistant') || path === '/admin/assistant') return '';
-  const chips = ['What is waiting for me today?', 'Who is due to renew?', 'Summarise recent activity', 'Publish ready reports'];
+  if (path === '/admin/assistant') return '';
+  const staff = u && isStaff(u);
+  const chips = staff ? ['What is waiting for me today?', 'Who is due to renew?', 'Summarise recent activity', 'Explain this page']
+    : u ? ['When does my access end?', 'What should I do next?', 'How does renewal work?', 'Explain this page'] : ['How does DELTA work?', 'What is included?', 'Is HTMA a medical test?', 'Explain this page'];
   return `<button class="fab ${aiOpen ? 'on' : ''}" data-act="ai-toggle" aria-expanded="${aiOpen}" aria-controls="ai-drawer" aria-label="${aiOpen ? 'Close' : 'Open'} AI assistant"><span aria-hidden="true">${aiOpen ? '✕' : '✦'}</span></button>
   <section class="ai-drawer ${aiOpen ? 'open' : ''}" id="ai-drawer" aria-label="AI assistant" ${aiOpen ? '' : 'hidden'}>
-    <header><b>✦ DELTA assistant</b><span class="xs muted">Works only from DELTA's own records · no clinical decisions</span></header>
-    <div class="log" id="ailog">${chatLog.map(m => `<div class="msg ${m.role === 'user' ? 'user' : 'bot'}">${esc(m.text)}</div>`).join('') || '<p class="sm muted">Hi! I can list what\'s waiting, show renewals, summarise activity or publish reports that are ready.</p>'}</div>
+    <header><b>✦ DELTA assistant</b><span class="xs muted">${S.assistant === 'claude' ? 'Powered by Claude' : 'Offline mode'} · knows every page · ${staff ? 'changes need your Confirm' : 'not medical advice'}</span></header>
+    <div class="log" id="ailog">${chatHTML(staff ? 'Hi! Ask about any page or client, see what\'s waiting, or ask me to make a change — e.g. “set the price to £275” or “publish Morgan\'s report”. Nothing changes until you tap Confirm.' : 'Hi! Ask me anything about DELTA — how it works, the six pillars, membership, your report, the podcast and videos.')}</div>
     <div class="chips" style="padding:0 .75rem .5rem">${chips.map(c => `<button class="chip" data-act="ai-ask" data-q="${esc(c)}">${esc(c)}</button>`).join('')}</div>
     <form data-form="assistant" class="ai-form"><input type="text" name="q" placeholder="Ask the assistant…" autocomplete="off" aria-label="Message"><button class="btn xs">Send</button></form>
   </section>`;
@@ -992,6 +985,14 @@ const A = {
     document.getElementById('test-out').innerHTML = r.results.map(c => `<div class="sm ${c.pass ? 'b-ok' : 'b-bad'}">${c.pass ? '✓' : '✕'} ${esc(c.name)} — expected [${c.expect.join(', ')}], got [${c.got.join(', ')}]</div>`).join('');
   },
   'ai-toggle'() { aiOpen = !aiOpen; render(); if (aiOpen) document.querySelector('#ai-drawer input')?.focus(); },
+  async 'ai-confirm'(el) {
+    const p = chatLog[+el.dataset.m]?.proposals?.[+el.dataset.p]; if (!p || p.state) return;
+    el.disabled = true;
+    const r = await act(p.action, p.params, { refresh: true });
+    p.state = r ? 'done' : 'failed'; if (!r) p.error = lastError;
+    render();
+  },
+  'ai-cancel'(el) { const p = chatLog[+el.dataset.m]?.proposals?.[+el.dataset.p]; if (p) { p.state = 'cancelled'; render(); } },
   'ai-ask'(el) { const f = document.querySelector('#ai-drawer form'); f.q.value = el.dataset.q; f.requestSubmit(); },
   async 'read-doc'(el) {
     const box = document.getElementById('doc-summary'), f = el.files[0]; if (!f) return;
@@ -1062,11 +1063,14 @@ const F = {
   settings(f, d) { const b = obj(d); return act('settings', { ...b, autoPublish: !!b.autoPublish }); },
   async assistant(f, d) {
     const q = (d.get('q') || '').trim(); if (!q) return;
-    chatLog.push({ role: 'user', text: q });
-    const r = await act('assistant', { q }, { refresh: false });
-    chatLog.push({ role: 'bot', text: r ? r.reply : 'Sorry — that request failed.' });
-    await load(); render(); document.querySelector('#ai-drawer input')?.focus();
+    const history = chatLog.slice(-10).map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', text: m.text }));
+    chatLog.push({ role: 'user', text: q }); chatLog.push({ role: 'bot', text: '…' }); render();
+    const r = await act('assistant', { q, history, page: pageContext() }, { refresh: false });
+    chatLog[chatLog.length - 1] = r ? { role: 'bot', text: r.reply, proposals: r.proposals || [] } : { role: 'bot', text: 'Sorry — that request failed. ' + (lastError || '') };
+    render(); document.querySelector('#ai-drawer input, form[data-form=assistant] input')?.focus();
+    return r;
   },
+
 };
 
 /* ───────────────────────── wiring ───────────────────────── */
