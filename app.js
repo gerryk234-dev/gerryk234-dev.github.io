@@ -227,7 +227,7 @@ R['/'] = () => `<main id="main">
   <section class="band"><div class="container grid md2" style="align-items:center">
     <div><div class="kicker">The Community Centre</div><h2 class="mt3" style="font-size:1.9rem">Meditation, yoga, tai chi, mindfulness — and plenty of laughter</h2>
       <p class="muted mt4">Drop into the practice rooms, breathe along with the guide, sit with the meditation timer, join a weekly session or add to the gratitude wall.</p><a class="btn mt6" href="#/centre">Visit the Community Centre</a></div>
-    <a class="mini-orbit" href="#/centre" aria-label="Visit the Community Centre">${PRACTICES.map((p, i) => `<span class="mo" style="--a:${i * 60}deg">${EMBLEM[p.emblem]}</span>`).join('')}<span class="mo-core"></span></a></div></section>
+    <a class="mini-orbit" href="#/centre" aria-label="Visit the Community Centre">${PRACTICES.map((p, i) => `<span class="mo" style="--a:${i * 60}deg">${EMBLEM[p.emblem]}</span>`).join('')}<span class="mo-fol" aria-hidden="true">${LIFE.flower('bg')}</span><span class="mo-core"></span></a></div></section>
   ${S.videos.some(v => v.youtubeId && v.status !== 'review') ? `<section class="band"><div class="container"><div class="flex between"><h2 style="font-size:1.6rem;font-weight:300">New on Meet Mineral Man</h2><a href="#/mineral-man">The full video library</a></div>
     <div class="grid md3 mt6">${S.videos.filter(v => v.youtubeId && v.status !== 'review' && !v.archived).slice(0, 3).map(videoCard).join('')}</div></div></section>` : ''}
   <section class="band"><div class="container"><div class="flex between"><h2 style="font-size:1.6rem;font-weight:300">Latest from the DELTA Podcast</h2><a href="#/podcast">All episodes</a></div>

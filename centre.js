@@ -48,7 +48,7 @@ R['/centre'] = (q = {}) => {
       <p class="lg muted mt4">Meditation, yoga, tai chi, mindfulness, laughter and comedy — around the six DELTA pillars. Drop in, breathe, watch, read, and practise together.</p>
       <div class="flex mt6"><button class="btn" data-act="breathe">🌬 Breathe with me</button><button class="btn ghost" data-act="sit">🔔 Meditation timer</button></div></div>
     <div class="orbit" aria-label="Rooms of the Community Centre">
-      <div class="orbit-glow" aria-hidden="true"></div>
+      <div class="orbit-glow" aria-hidden="true"></div><div class="orbit-fol" aria-hidden="true">${LIFE.flower('bg')}</div>
       ${orbit(pracs, 'ring-out', 'var(--r-outer)')}${orbit(pills, 'ring-in', 'var(--r-inner)')}
       <a class="core" href="#/centre" aria-label="Community Centre"><img src="brand/logo.jpg" alt="" width="88" height="88"><span>Community<br>Centre</span></a>
     </div>
@@ -57,6 +57,8 @@ R['/centre'] = (q = {}) => {
   <section class="container centre-sec"><h2>The practice rooms</h2>
     <div class="grid md3 mt6">${PRACTICES.map(p => `<a class="card room" href="#/centre/${p.id}"><div class="room-em">${EMBLEM[p.emblem]}</div><div><div class="kicker" style="font-size:.66rem">${esc(p.tag)}</div><h3 class="mt1" style="font-size:1.2rem">${esc(p.name)}</h3><p class="sm muted mt2">${esc(p.desc)}</p>
       <p class="xs gold mt3">${c.videos.filter(v => v.practice === p.id).length} videos · ${c.books.filter(b => b.practice === p.id).length} books · ${c.sessions.filter(s => s.practice === p.id).length} weekly session${c.sessions.filter(s => s.practice === p.id).length === 1 ? '' : 's'}</p></div></a>`).join('')}</div></section>
+
+  ${lifeSection()}
 
   <section class="container centre-sec"><div class="grid md2" style="align-items:start">
     <div><h2>This week</h2><p class="sm muted mt2">Live online sessions with a DELTA guide. ${member ? 'Tap “I’ll join” and we’ll remind you.' : 'Members can save a place.'}</p>
@@ -68,13 +70,13 @@ R['/centre'] = (q = {}) => {
         <div class="xs muted mt3">Your week: ${last7.map(m => MOODS.find(x => x[0] === m)?.[1] || '·').join(' ')}</div></div>` : ''}
       <div class="card relax"><h2 class="sm" style="font-size:1rem">Relax now</h2><div class="grid mt3" style="grid-template-columns:1fr 1fr;gap:.6rem">
         <button class="tile" data-act="breathe"><span class="t-ico">🌬</span>Breathing guide</button><button class="tile" data-act="sit"><span class="t-ico">🔔</span>Meditation timer</button>
-        <button class="tile" data-act="sit" data-sound="ocean"><span class="t-ico">🌊</span>Ocean sounds</button><button class="tile" data-act="sit" data-sound="rain"><span class="t-ico">🌧</span>Gentle rain</button></div></div>
+        <button class="tile" data-act="sit" data-sound="ocean"><span class="t-ico">🌊</span>Ocean sounds</button><button class="tile" data-act="sit" data-sound="rain"><span class="t-ico">🌧</span>Gentle rain</button><button class="tile" data-act="kindness" style="grid-column:1/-1"><span class="t-ico">♥</span>Loving-kindness — send love</button></div></div>
       <div class="card"><h2 class="sm" style="font-size:1rem">Follow DELTA</h2><p class="xs muted mt1">New videos, sessions and good news.</p>${socialButtons_(true)}</div>
     </div></div></section>
 
   <section class="container centre-sec"><h2>Gratitude wall</h2><p class="sm muted mt2">Small good things, shared kindly.</p>
     ${member ? `<form class="flex mt4" data-form="gratitude"><input type="text" name="text" maxlength="200" required placeholder="Today I’m grateful for…" style="flex:1;min-width:14rem;margin:0" aria-label="Today I'm grateful for"><label class="chk" style="margin:0"><input type="checkbox" name="anon"> Anonymous</label><button class="btn xs">Share</button></form>` : `<p class="sm mt3"><a href="#/join">Join DELTA</a> to read and add to the wall.</p>`}
-    <div class="gwall mt6">${(c.gratitude || []).map((g, i) => `<figure class="gnote" style="--i:${i % 7}"><blockquote>${esc(g.text)}</blockquote><figcaption class="xs muted">— ${esc(g.by)} · ${fmtDate(g.at)}</figcaption>${member ? `<button class="linkbtn xs" data-act="post-report" data-id="${g.id}">Report</button>` : ''}</figure>`).join('') || (member ? '<p class="sm muted">Be the first to add something.</p>' : '')}</div></section>
+    <div class="gwall mt6">${(c.gratitude || []).map((g, i) => `<figure class="gnote" style="--i:${i % 7}"><blockquote>${esc(g.text)}</blockquote><figcaption class="xs muted">— ${esc(g.by)} · ${fmtDate(g.at)}</figcaption>${member ? `<div class="flex mt2" style="gap:.5rem"><button class="btn ghost xs" data-act="post-love" data-id="${g.id}" ${g.loved ? 'aria-pressed="true" disabled' : ''}>♥ ${g.loves || 0}</button><button class="linkbtn xs" data-act="post-report" data-id="${g.id}">Report</button></div>` : ''}</figure>`).join('') || (member ? '<p class="sm muted">Be the first to add something.</p>' : '')}</div></section>
 
   <section class="container centre-sec"><h2>Gathering rooms</h2><p class="sm muted mt2">Moderated conversation groups for each pillar, Awakening and everyday encouragement.</p>
     <div class="chips mt4">${PILLARS.map(p => `<a class="chip" href="#/community/${p.id}">${p.icon} ${p.name[0] + p.name.slice(1).toLowerCase()}</a>`).join('')}<a class="chip" href="#/community/awakening">✧ Awakening</a><a class="chip" href="#/community/general">♡ Encouragement</a><a class="chip" href="#/laughology">😄 LAUGHOLOGY</a></div></section>
