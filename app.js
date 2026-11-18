@@ -808,12 +808,14 @@ function render() {
   const q = Object.fromEntries(new URLSearchParams(qs || ''));
   const parts = path.split('/').filter(Boolean);
   let html;
+  try {
   if (path.startsWith('/admin')) html = adminGuard(path) ?? (R[path] ? R[path](q) : notFound());
   else if (parts[0] === 'pillars' && parts[1]) html = pillarPage(parts[1]);
   else if (parts[0] === 'community') html = R['/community'](q, parts);
   else if (parts[0] === 'centre' && parts[1]) html = R['/centre/' + parts[1]] ? R['/centre/' + parts[1]](q, parts) : centreRoom(parts[1]);
   else if (parts[0] === 'pay') html = payPage(parts[1]);
   else html = R[path] ? R[path](q, parts) : notFound();
+  } catch (e) { console.error(e); html = page(`<div class="card hl"><h1>This page didn’t load</h1><p class="muted mt3">Something went wrong showing this page. The rest of DELTA still works.</p><div class="flex mt6"><a class="btn" href="#/">Go to the homepage</a>${STATIC ? '<button class="btn ghost" data-act="start-fresh">Start the demo fresh</button>' : ''}</div><p class="xs muted mt4">Details: ${esc(e.message)}</p></div>`, 'narrow'); }
   document.body.dataset.route = parts[0] || 'home';
   document.getElementById('app').innerHTML = responsiveImages(`<a class="skip" href="#main" data-act="skip">Skip to content</a>${demobar()}${header()}${html}${footer()}${aiWidget(path)}`);
   document.title = 'DELTA — Awakening Human Potential';
@@ -919,6 +921,7 @@ function download(name, text, type = 'application/json') {
 /* ───────────────────────── actions (buttons) ───────────────────────── */
 const ds = el => el.dataset;
 const A = {
+  'start-fresh'() { try { Object.keys(localStorage).filter(k => k.startsWith('delta_')).forEach(k => localStorage.removeItem(k)); } catch { /* storage unavailable */ } location.hash = '#/'; location.reload(); },
   motion() { try { localStorage.setItem('delta_motion', motionMoving() ? 'off' : 'on'); } catch { /* storage unavailable */ } applyMotion(); render(); },
   menu(el) { const n = document.getElementById('mainnav'), open = n.classList.toggle('open'); el.setAttribute('aria-expanded', open); el.setAttribute('aria-label', open ? 'Close menu' : 'Open menu'); },
   skip(el, ev) { ev.preventDefault(); const m = document.getElementById('main'); m?.focus(); m?.scrollIntoView(); },
@@ -1097,4 +1100,4 @@ addEventListener('scroll', () => { if (syTick || reduceMotion) return; syTick = 
 window.addEventListener('hashchange', () => { render(); window.scrollTo(0, 0); });
 /* start once every script on the page (e.g. centre.js) has run */
 const domReady = new Promise(r => (document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', r, { once: true }) : r()));
-Promise.all([load(), domReady]).then(render).catch(e => { document.getElementById('app').innerHTML = `<main class="page"><div class="narrow card"><h1>DELTA is unavailable</h1><p class="muted mt2">${esc(e.message)}. Please try again shortly.</p></div></main>`; });
+Promise.all([load(), domReady]).then(render).catch(e => { console.error(e); document.getElementById('app').innerHTML = `<main class="page"><div class="narrow card"><h1>DELTA didn’t start</h1><p class="muted mt2">This browser couldn’t load DELTA. Tap “Start fresh” — and if that doesn’t help, update the browser or try Chrome or Safari.</p><div class="flex mt6"><button class="btn" data-act="start-fresh">Start fresh</button></div><p class="xs muted mt4">Details: ${esc(e.message)} · ${esc(navigator.userAgent)}</p></div></main>`; });
