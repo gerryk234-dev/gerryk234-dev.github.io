@@ -152,7 +152,7 @@ function header() {
     <a class="brand" href="#/">${logo()}<div><div class="t1">DELTA</div><div class="t2">Analysis · Intelligence · Method</div></div></a>
     <button class="menu-btn" data-act="menu" aria-expanded="false" aria-controls="mainnav" aria-label="Open menu"><span></span></button>
     <nav class="main" id="mainnav" aria-label="Main"><div>
-      ${a('/how-it-works', 'How it works')}${a('/pillars', 'Six Pillars')}${a('/awakening', 'Awakening')}${a('/podcast', 'Podcast')}${a('/mineral-man', 'Mineral Man')}${a('/partners', 'Partners')}${a('/faq', 'FAQs')}
+      ${a('/how-it-works', 'How it works')}${a('/pillars', 'Six Pillars')}${a('/centre', 'Community')}${a('/awakening', 'Awakening')}${a('/podcast', 'Podcast')}${a('/mineral-man', 'Mineral Man')}${a('/partners', 'Partners')}${a('/faq', 'FAQs')}
       ${u ? (isStaff(u) ? a('/admin', 'Admin', 'strong') : '') + a('/portal', 'My Portal', 'strong') : a('/login', 'Sign in') + a('/register', 'Sign up', 'strong')}
     </div></nav></div></header>`;
 }
@@ -160,9 +160,10 @@ function footer() {
   return `<footer class="site"><div class="cols">
     <div><a class="brand" href="#/">${logo()}<div><div class="t1">DELTA</div><div class="t2">Awakening Human Potential</div></div></a></div>
     <div><b class="gold sm">Explore</b><a href="#/how-it-works">How DELTA works</a><a href="#/analysis">Analysis</a><a href="#/intelligence">Intelligence</a><a href="#/pillars">Method — six pillars</a><a href="#/awakening">Awakening</a></div>
+    <div><b class="gold sm">Community</b><a href="#/centre">Community Centre</a><a href="#/centre/meditation">Meditation</a><a href="#/centre/yoga">Yoga</a><a href="#/centre/taichi">Tai Chi & Qi Gong</a><a href="#/centre/laughter">Laughter & comedy</a></div>
     <div><b class="gold sm">Listen & watch</b><a href="#/podcast">The DELTA Podcast</a><a href="#/mineral-man">Meet Mineral Man</a><a href="#/partners">Partner Collective</a></div>
     <div><b class="gold sm">Help</b><a href="#/about">About & contact</a><a href="#/faq">FAQs</a><a href="#/legal">Privacy, terms & disclaimers</a><a href="#/legal">Cookie choices</a></div>
-  </div><div class="base">DELTA · Analysis · Intelligence · Method · Awakening Human Potential<br>DELTA is an educational wellbeing service. Hair Tissue Mineral Analysis is not a standalone diagnostic tool, and nothing here is medical advice, diagnosis or treatment.</div></footer>`;
+  </div><div class="base">${socialButtons_()}DELTA · Analysis · Intelligence · Method · Awakening Human Potential<br>DELTA is an educational wellbeing service. Hair Tissue Mineral Analysis is not a standalone diagnostic tool, and nothing here is medical advice, diagnosis or treatment.</div></footer>`;
 }
 function demobar() {
   if (!S.demo) return '';
@@ -180,7 +181,7 @@ function subnav(items, counts = {}) {
   const path = location.hash.slice(1);
   return `<nav class="subnav" aria-label="Section"><div class="container">${items.map(([to, l]) => `<a href="#${to}" class="${path === to ? 'active' : ''}">${l}${counts[to] ? `<span class="count">${counts[to]}</span>` : ''}</a>`).join('')}</div></nav>`;
 }
-const portalNav = () => subnav([['/portal', 'Overview'], ['/report', 'My report'], ['/learn', 'Six pillars'], ['/awakening', 'Awakening'], ['/podcast', 'Podcast'], ['/mineral-man', 'Mineral Man'], ['/laughology', 'LAUGHOLOGY'], ['/community', 'Community'], ['/partners', 'Partners'], ['/account', 'Account']], { '/account': me()?.inbox.filter(n => !n.read).length });
+const portalNav = () => subnav([['/portal', 'Overview'], ['/report', 'My report'], ['/learn', 'Six pillars'], ['/awakening', 'Awakening'], ['/podcast', 'Podcast'], ['/mineral-man', 'Mineral Man'], ['/centre', 'Community Centre'], ['/laughology', 'LAUGHOLOGY'], ['/partners', 'Partners'], ['/account', 'Account']], { '/account': me()?.inbox.filter(n => !n.read).length });
 function adminNav() {
   const tests = members().flatMap(u => u.tests.map(t => ({ u, t })));
   const c = {
@@ -223,6 +224,10 @@ R['/'] = () => `<main id="main">
     <div class="card hl"><ul class="sm" style="margin:0;padding-left:1.1rem;line-height:2">
       <li>Hair mineral test kit and laboratory analysis</li><li>Your Mineral Intelligence chart and plain-English summary</li><li>A safety-screened proposed programme</li><li>Six months of the six pillars, Awakening, the DELTA Podcast and Meet Mineral Man</li><li>LAUGHOLOGY, community groups and the Partner Collective</li><li class="muted">Optional: a personal practitioner voice note (${money(S.settings.voicePrice)})</li></ul></div>
   </div></section>
+  <section class="band"><div class="container grid md2" style="align-items:center">
+    <div><div class="kicker">The Community Centre</div><h2 class="mt3" style="font-size:1.9rem">Meditation, yoga, tai chi, mindfulness — and plenty of laughter</h2>
+      <p class="muted mt4">Drop into the practice rooms, breathe along with the guide, sit with the meditation timer, join a weekly session or add to the gratitude wall.</p><a class="btn mt6" href="#/centre">Visit the Community Centre</a></div>
+    <a class="mini-orbit" href="#/centre" aria-label="Visit the Community Centre">${PRACTICES.map((p, i) => `<span class="mo" style="--a:${i * 60}deg">${EMBLEM[p.emblem]}</span>`).join('')}<span class="mo-core"></span></a></div></section>
   ${S.videos.some(v => v.youtubeId && v.status !== 'review') ? `<section class="band"><div class="container"><div class="flex between"><h2 style="font-size:1.6rem;font-weight:300">New on Meet Mineral Man</h2><a href="#/mineral-man">The full video library</a></div>
     <div class="grid md3 mt6">${S.videos.filter(v => v.youtubeId && v.status !== 'review' && !v.archived).slice(0, 3).map(videoCard).join('')}</div></div></section>` : ''}
   <section class="band"><div class="container"><div class="flex between"><h2 style="font-size:1.6rem;font-weight:300">Latest from the DELTA Podcast</h2><a href="#/podcast">All episodes</a></div>
@@ -282,6 +287,7 @@ function pillarPage(id) {
   ${id === 'release' ? `<div class="card hl mt6 flex between"><div><h2>LAUGHOLOGY</h2><p class="sm muted mt1">Humour as a way in to RELEASE — jokes, funny videos and stories from members.</p></div><a href="#/laughology" class="btn">Open LAUGHOLOGY</a></div>` : ''}
   ${vids.length ? `<div class="flex between mt8"><h2>Meet Mineral Man videos</h2><a class="sm" href="#/mineral-man?cat=${encodeURIComponent(vids[0].cat)}">See all</a></div><div class="grid md3 mt4">${vids.slice(0, 6).map(videoCard).join('')}</div>` : ''}
   ${eps.length ? `<h2 class="mt8">Related podcast episodes</h2><div class="grid md2 mt4">${eps.map(episodeCard).join('')}</div>` : ''}
+  ${(() => { const bk = (S.centre?.books || []).filter(b => b.practice === id || PRACTICES.some(x => x.id === b.practice && x.pillar === id)); return bk.length ? `<h2 class="mt8">Books for this pillar</h2><div class="shelf mt4">${bk.map((b, i) => `<a class="book" href="${bookLink(b)}" target="_blank" rel="noopener" style="--i:${i}"><span class="spine"><b>${esc(b.title)}</b><i>${esc(b.author)}</i></span><span class="b-why">${esc(b.why)}<span class="xs gold">Find this book ↗</span></span></a>`).join('')}</div>` : ''; })()}
   ${partners.length ? `<h2 class="mt8">From the Partner Collective</h2><p class="xs muted mt1">Commercial partners are shown separately from DELTA's teaching and from your personal recommendations.</p><div class="grid md3 mt4">${partners.map(partnerCard).join('')}</div>` : ''}
   <p class="xs muted mt8">Educational material only. It does not treat trauma or any medical condition. Choose the variation that suits you and stop if anything feels wrong.</p>
   ${access ? '' : '<a href="#/join" class="btn mt4">Join to unlock every lesson</a>'}`, 'mid');
@@ -760,6 +766,14 @@ R['/admin/lessons'] = () => adminNav() + page(`<h1>Lessons</h1><p class="muted m
 
 R['/admin/content'] = () => adminNav() + page(`<h1>Content</h1><p class="muted mt2">Podcast episodes, Meet Mineral Man videos and the Awakening story — no developer needed.</p>
   <form class="card stack mt6" data-form="story"><h2 class="gold">Founder's Awakening Story</h2><textarea name="story" rows="6">${esc(S.founderStory)}</textarea><button class="btn xs">Save story</button></form>
+  <div class="card mt6"><h2 class="gold">Community Centre</h2><p class="xs muted mt1">Videos, books and weekly sessions for the practice rooms.</p>
+    ${(() => { const c = S.centre, opts = sel => PRACTICES.map(p => `<option value="${p.id}" ${p.id === sel ? 'selected' : ''}>${p.name}</option>`).join('');
+      return `<details class="mt4"><summary>Videos (${c.videos.length})</summary><form class="grid md2 mt3" data-form="centre-video"><p class="form-error" role="alert" tabindex="-1" hidden style="grid-column:1/-1"></p><label class="f"><span>YouTube link</span><input type="url" name="url" required placeholder="https://www.youtube.com/watch?v=…"></label><label class="f"><span>Room</span><select name="practice">${opts()}</select></label><label class="f"><span>Title (optional — looked up automatically)</span><input type="text" name="title"></label><div style="align-self:end"><button class="btn xs">Add video</button></div></form>
+        <div class="tablewrap mt3"><table><tbody>${c.videos.map(v => `<tr><td class="xs">${esc(practiceById(v.practice)?.name || v.practice)}</td><td><a href="https://www.youtube.com/watch?v=${esc(v.youtubeId)}" target="_blank" rel="noopener">${esc(v.title)}</a><div class="xs muted">${esc(v.channel || '')}</div></td><td><button class="linkbtn xs" data-act="centre-remove" data-id="${v.id}">Remove</button></td></tr>`).join('')}</tbody></table></div></details>
+      <details><summary>Books (${c.books.length})</summary><form class="grid md2 mt3" data-form="centre-book"><label class="f"><span>Title</span><input type="text" name="title" required></label><label class="f"><span>Author</span><input type="text" name="author" required></label><label class="f"><span>Shelf</span><select name="practice">${opts()}${PILLARS.map(p => `<option value="${p.id}">${p.name} pillar</option>`).join('')}</select></label><label class="f"><span>Why read it (one line)</span><input type="text" name="why"></label><div><button class="btn xs">Add book</button></div></form>
+        <div class="tablewrap mt3"><table><tbody>${c.books.map(b => `<tr><td class="xs">${esc(b.practice)}</td><td>${esc(b.title)}<div class="xs muted">${esc(b.author)}</div></td><td><button class="linkbtn xs" data-act="centre-remove" data-id="${b.id}">Remove</button></td></tr>`).join('')}</tbody></table></div></details>
+      <details><summary>Weekly sessions (${c.sessions.length})</summary><form class="grid md2 mt3" data-form="centre-session"><label class="f"><span>Title</span><input type="text" name="title" required></label><label class="f"><span>Room</span><select name="practice">${opts()}</select></label><label class="f"><span>Day</span><select name="day">${DAYS.map((d, i) => `<option value="${i}">${d}</option>`).join('')}</select></label><label class="f"><span>Time</span><input type="time" name="time" required value="19:00"></label><label class="f"><span>Minutes</span><input type="number" name="mins" value="30" min="5" max="240"></label><label class="f"><span>Where</span><input type="text" name="where" value="Online"></label><div><button class="btn xs">Add session</button></div></form>
+        <div class="tablewrap mt3"><table><tbody>${c.sessions.map(x => `<tr><td class="xs">${DAYS[x.day]} ${esc(x.time)}</td><td>${esc(x.title)}<div class="xs muted">${x.going} going</div></td><td><button class="linkbtn xs" data-act="centre-remove" data-id="${x.id}">Remove</button></td></tr>`).join('')}</tbody></table></div></details>`; })()}</div>
   <div class="card mt6"><h2 class="gold">Podcast episodes</h2><p class="xs muted mt1">Audio is hosted by your podcast provider; paste its episode/RSS details here.</p><div class="tablewrap mt3"><table><thead><tr><th>#</th><th>Title</th><th>Date</th><th>Access</th><th></th></tr></thead><tbody>${S.episodes.map(e => `<tr style="${e.archived ? 'opacity:.45' : ''}"><td>${e.n}</td><td>${esc(e.title)}${e.featured ? ' <span class="badge b-gold">Featured</span>' : ''}</td><td class="xs">${e.date}</td><td><button class="linkbtn xs" data-act="ep-access" data-id="${e.id}">${e.access}</button></td><td class="xs"><button class="linkbtn xs" data-act="ep-feature" data-id="${e.id}">Feature</button> · <button class="linkbtn xs" data-act="ep-archive" data-id="${e.id}">${e.archived ? 'Restore' : 'Archive'}</button></td></tr>`).join('')}</tbody></table></div>
     <form class="grid md2 mt4" data-form="episode"><label class="f"><span>Title</span><input type="text" name="title" required></label><label class="f"><span>Publish date</span><input type="date" name="date" required></label><label class="f"><span>Topics (comma separated)</span><input type="text" name="topics" placeholder="Minerals, REST"></label><label class="f"><span>Guest</span><input type="text" name="guest"></label><label class="f" style="grid-column:1/-1"><span>Description</span><textarea name="desc" rows="2"></textarea></label><label class="f"><span>Access</span><select name="access"><option value="public">public</option><option value="members">members</option></select></label><div style="align-self:end"><button class="btn xs">Add episode</button></div></form></div>
   ${(() => { const vids = S.videos.slice().sort((a, b) => (a.status === 'review') === (b.status === 'review') ? (b.order || 0) - (a.order || 0) : a.status === 'review' ? -1 : 1);
@@ -804,6 +818,8 @@ R['/admin/settings'] = () => adminNav() + page(`<h1>Settings</h1><p class="muted
     <label class="f"><span>Voice note question limit</span><input type="number" name="voiceQuestions" min="1" max="10" value="${S.settings.voiceQuestions}"></label><label class="f"><span>Voice note turnaround (shown to clients)</span><input type="text" name="voiceTurnaround" value="${esc(S.settings.voiceTurnaround)}"></label>
     <label class="f"><span>Renewal reminders — days before expiry (comma separated)</span><input type="text" name="reminderDays" value="${S.settings.reminderDays.join(', ')}"></label><label class="f"><span>Access per qualifying test</span><input type="text" value="${S.settings.accessMonths} months" disabled></label>
     <label class="f"><span>Minimum age to register</span><input type="number" name="minAge" min="16" max="99" value="${S.settings.minAge ?? 18}"></label></div>
+    <fieldset class="stack" style="border:1px solid var(--border);border-radius:.75rem;padding:1rem"><legend class="sm gold">Social media links (shown as buttons in the footer and Community Centre)</legend>
+      ${[['facebook', 'Facebook', 'https://www.facebook.com/yourpage'], ['instagram', 'Instagram', 'https://www.instagram.com/yourname'], ['tiktok', 'TikTok', 'https://www.tiktok.com/@yourname'], ['youtube', 'YouTube', 'https://www.youtube.com/@mineralman']].map(([k, l, ph]) => `<label class="f"><span>${l}</span><input type="url" name="social_${k}" placeholder="${ph}" value="${esc(S.settings.social?.[k] || '')}"></label>`).join('')}</fieldset>
     <label class="chk"><input type="checkbox" name="autoPublish" ${S.settings.autoPublish ? 'checked' : ''}> Auto-publish reports that pass validation and need no safety review</label>
     <button class="btn">Save settings</button></form>`, 'mid');
 
@@ -827,6 +843,7 @@ function render() {
   if (path.startsWith('/admin')) html = adminGuard(path) ?? (R[path] ? R[path](q) : notFound());
   else if (parts[0] === 'pillars' && parts[1]) html = pillarPage(parts[1]);
   else if (parts[0] === 'community') html = R['/community'](q, parts);
+  else if (parts[0] === 'centre' && parts[1]) html = centreRoom(parts[1]);
   else if (parts[0] === 'pay') html = payPage(parts[1]);
   else html = R[path] ? R[path](q, parts) : notFound();
   document.getElementById('app').innerHTML = responsiveImages(`<a class="skip" href="#main" data-act="skip">Skip to content</a>${demobar()}${header()}${html}${footer()}${aiWidget(path)}`);
@@ -965,6 +982,7 @@ const A = {
   'ep-access'(el) { act('ep-access', { id: el.dataset.id }); },
   'ep-feature'(el) { act('ep-feature', { id: el.dataset.id }); },
   'ep-archive'(el) { act('ep-archive', { id: el.dataset.id }); },
+  'centre-remove'(el) { dialog({ title: 'Remove this item?', body: 'It disappears from the Community Centre.', ok: 'Remove', onOk: () => act('centre-remove', { id: el.dataset.id }) }); },
   'vid-publish'(el) { act('vid-publish', { id: el.dataset.id }); },
   'vid-hold'(el) { act('vid-hold', { id: el.dataset.id }); },
   yt(el) {
@@ -1100,4 +1118,6 @@ document.addEventListener('error', ev => { if (ev.target.matches?.('.vthumb img'
 let syTick = false;
 addEventListener('scroll', () => { if (syTick || reduceMotion) return; syTick = true; requestAnimationFrame(() => { document.documentElement.style.setProperty('--sy', Math.round(scrollY)); syTick = false; }); }, { passive: true });
 window.addEventListener('hashchange', () => { render(); window.scrollTo(0, 0); });
-load().then(render).catch(e => { document.getElementById('app').innerHTML = `<main class="page"><div class="narrow card"><h1>DELTA is unavailable</h1><p class="muted mt2">${esc(e.message)}. Please try again shortly.</p></div></main>`; });
+/* start once every script on the page (e.g. centre.js) has run */
+const domReady = new Promise(r => (document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', r, { once: true }) : r()));
+Promise.all([load(), domReady]).then(render).catch(e => { document.getElementById('app').innerHTML = `<main class="page"><div class="narrow card"><h1>DELTA is unavailable</h1><p class="muted mt2">${esc(e.message)}. Please try again shortly.</p></div></main>`; });

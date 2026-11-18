@@ -135,8 +135,64 @@ const SAFETY_QS = [
   { id: 'supps', q: 'Are you currently taking supplements?' },
 ];
 
+/* ── Community Centre: practices, curated videos, books and the weekly timetable (all admin-editable once seeded) ── */
+const PRACTICES = [
+  { id: 'meditation', name: 'Meditation', tag: 'Settle the mind', pillar: 'rest', emblem: 'lotus', desc: 'Short guided sits to quieten a busy mind — from two-minute pauses to longer stillness practice. Sit, lie down or walk; there is no wrong way to begin.' },
+  { id: 'yoga', name: 'Yoga', tag: 'Breath and gentle movement', pillar: 'move', emblem: 'yoga', desc: 'Beginner-friendly flows that link breath with movement — strength, flexibility and a calmer body. Always move within your own range.' },
+  { id: 'taichi', name: 'Tai Chi & Qi Gong', tag: 'Moving meditation', pillar: 'ground', emblem: 'yinyang', desc: 'Slow, flowing forms rooted in Chinese practice, including Qi Gong — balance, posture and a quiet focus. Lovely outdoors, at any age.' },
+  { id: 'mindfulness', name: 'Mindfulness', tag: 'Be here now', pillar: 'ground', emblem: 'ripple', desc: 'Everyday awareness — noticing breath, body and surroundings without judgement. Small moments, practised often.' },
+  { id: 'laughter', name: 'Laughter', tag: 'Laughter yoga & play', pillar: 'release', emblem: 'laugh', desc: 'Laughter yoga, playful breathing and LAUGHOLOGY — laughing for no reason, together. It is part of the RELEASE pillar.' },
+  { id: 'comedy', name: 'Comedy', tag: 'Clean comedy & good company', pillar: 'release', emblem: 'masks', desc: 'Family-friendly stand-up and silly stories to share. Watch on your own or join the Friday comedy night.' },
+];
+const CENTRE_VIDEOS = [
+  ['meditation', 'U9YKY7fdwyg', '10-Minute Meditation For Beginners', 'Goodful', '10:21'],
+  ['meditation', 'WHCl6b9K25Y', '10-Minute Guided Meditation for Beginners to Clear Thoughts', 'Yoga Journal', '11:21'],
+  ['meditation', 'FGO8IWiusJo', 'Guided Morning Meditation — 10 Minutes to Start Every Day', 'Boho Beautiful Yoga', '10:35'],
+  ['meditation', 'KIltp1hJlVY', 'Best Grounding Meditation', 'Mineral Man', '10:16'],
+  ['meditation', 'jiRhB1VvfMY', 'Best Affirmation Meditation', 'Mineral Man', '14:38'],
+  ['yoga', 'v7AYKMP6rOE', 'Yoga For Complete Beginners — 20 Minute Home Practice', 'Yoga With Adriene', '23:45'],
+  ['yoga', 'vNyJuQuuMC8', '20-Minute Yoga For Beginners — Start Yoga Here', 'Yoga With Adriene', '21:41'],
+  ['yoga', 'camy0PIKxwU', '20 Min Gentle Yoga Routine — Full Body Stretch', 'Charlie Follows', '19:50'],
+  ['taichi', 'cEvSqHZIj8w', 'Tai Chi For Beginners: 7-Minute Routine', 'Phoenix Mountain Tai Chi', '8:00'],
+  ['taichi', 'G0epup_G37s', 'Gentle Tai Chi Routine for All Levels', 'Taichi Workout', '30:11'],
+  ['taichi', 'JkmYxL6AjDo', 'Tree Grounding — Why Everyone Needs It', 'Mineral Man', '3:45'],
+  ['mindfulness', 'ZToicYcHIOU', 'Daily Calm — 10 Minute Mindfulness Meditation: Be Present', 'Calm', '10:30'],
+  ['mindfulness', '6p_yaNFSYao', 'Mindfulness Meditation — Guided 10 Minutes', 'The Honest Guys', '9:48'],
+  ['mindfulness', 'ABqBCQCf81o', 'Learn How To Breathe Correctly in 5 Minutes', 'Mineral Man', '6:18'],
+  ['mindfulness', 'ZRRkhLOY6zw', 'The Healing Power of the Now', 'Mineral Man', '10:53'],
+  ['laughter', '59KAzaNkctg', 'Laughter Yoga', 'Mayo Clinic', '4:36'],
+  ['laughter', 'wfB58mhciAE', 'Five-Minute Laughter Yoga with Dr Madan Kataria', 'Laughter Guru', '5:22'],
+  ['laughter', '4p4dZ0afivk', 'Laughter Yoga — Liliana DeLeo', 'TEDx Talks', '4:59'],
+  ['laughter', 'WbXpggclVdU', 'The Power of Smiling', 'Mineral Man', '9:06'],
+  ['comedy', 'j57MWJlN8aY', 'A Comedy Special the Whole Family Can Enjoy — Landry', 'Dry Bar Comedy', '22:25'],
+  ['comedy', 'nQ3qp1VOYiA', 'Deep Thoughts on Dumb Things — Clean Comedy', 'John Branyan', '28:39'],
+  ['comedy', 'oNdE22lcgkM', 'My Dad Is Old — Stand-Up', 'Colin C. (Cool Beans Comedy)', '4:21'],
+].map(([practice, youtubeId, title, channel, length]) => ({ practice, youtubeId, title, channel, length }));
+const BOOKS = [
+  ['meditation', 'The Miracle of Mindfulness', 'Thich Nhat Hanh', 'A gentle, practical classic on sitting, breathing and everyday awareness.'],
+  ['meditation', 'Wherever You Go, There You Are', 'Jon Kabat-Zinn', 'Short chapters on bringing meditation into ordinary life.'],
+  ['mindfulness', 'Full Catastrophe Living', 'Jon Kabat-Zinn', 'The book behind mindfulness-based stress reduction (MBSR).'],
+  ['mindfulness', 'The Power of Now', 'Eckhart Tolle', 'On presence and stepping out of the busy, thinking mind.'],
+  ['yoga', 'Light on Yoga', 'B.K.S. Iyengar', 'The illustrated reference to postures and breathing.'],
+  ['yoga', 'The Heart of Yoga', 'T.K.V. Desikachar', 'Building a personal practice that suits your own body.'],
+  ['taichi', 'The Harvard Medical School Guide to Tai Chi', 'Peter M. Wayne', 'Tai chi explained clearly, with the research behind it.'],
+  ['taichi', 'Tao Te Ching', 'Lao Tzu (tr. Stephen Mitchell)', 'The short, timeless text behind the philosophy of flow.'],
+  ['laughter', 'Laugh for No Reason', 'Dr Madan Kataria', 'From the founder of laughter yoga — how and why it works in groups.'],
+  ['laughter', 'The Book of Joy', 'Dalai Lama & Desmond Tutu', 'Two friends on joy, humour and resilience.'],
+  ['comedy', 'Born Standing Up', 'Steve Martin', 'A warm, funny memoir about a life in comedy.'],
+  ['comedy', 'Yes Please', 'Amy Poehler', 'Stories, jokes and kind advice.'],
+  ['ground', 'Breath', 'James Nestor', 'A lively look at how we breathe — pairs well with GROUND.'],
+  ['rest', 'Why We Sleep', 'Matthew Walker', 'An accessible book on sleep — pairs with REST.'],
+  ['environment', 'The Life-Changing Magic of Tidying Up', 'Marie Kondo', 'Creating calmer spaces — pairs with ENVIRONMENT.'],
+  ['move', 'Born to Run', 'Christopher McDougall', 'A story about the joy of running — pairs with MOVE.'],
+].map(([practice, title, author, why]) => ({ practice, title, author, why }));
+const SESSIONS = [
+  ['taichi', 'Sunrise Tai Chi', 1, '07:30', 20], ['meditation', 'Evening Guided Meditation', 2, '19:00', 15], ['laughter', 'Lunchtime Laughter Yoga', 3, '12:30', 20],
+  ['yoga', 'Gentle Yoga Flow', 4, '18:30', 30], ['comedy', 'Friday Comedy Night (watch party)', 5, '20:00', 45], ['mindfulness', 'Mindful Morning Walk', 6, '09:00', 30], ['meditation', 'Sunday Stillness Circle', 0, '18:00', 20],
+].map(([practice, title, day, time, mins]) => ({ practice, title, day, time, mins, host: 'DELTA guide', where: 'Online' }));
+
 /* Shared by the browser (global) and the server (require). */
 (function (exportsObj) {
   if (typeof module !== 'undefined' && module.exports) module.exports = exportsObj;
   else self.DeltaData = exportsObj;
-})({ PILLARS, EPISODES, VIDEOS, PARTNERS, FAQS, JOKES, MINERALS, DEMO_RESULT, TOXIC, RATIOS, RULESETS, CURRENT_RULESET, SAFETY_QS });
+})({ PILLARS, EPISODES, VIDEOS, PARTNERS, FAQS, JOKES, MINERALS, DEMO_RESULT, TOXIC, RATIOS, RULESETS, CURRENT_RULESET, SAFETY_QS, PRACTICES, CENTRE_VIDEOS, BOOKS, SESSIONS });
