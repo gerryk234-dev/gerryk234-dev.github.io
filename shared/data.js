@@ -191,8 +191,111 @@ const SESSIONS = [
   ['yoga', 'Gentle Yoga Flow', 4, '18:30', 30], ['comedy', 'Friday Comedy Night (watch party)', 5, '20:00', 45], ['mindfulness', 'Mindful Morning Walk', 6, '09:00', 30], ['meditation', 'Sunday Stillness Circle', 0, '18:00', 20],
 ].map(([practice, title, day, time, mins]) => ({ practice, title, day, time, mins, host: 'DELTA guide', where: 'Online' }));
 
+
+/* Guided methods: step-by-step practices the Community Centre plays with a living, animated guide.
+   step = [name, seconds, cue, breath] — breath: 'in' | 'out' | 'hold' | '' (movement / rest).
+   Each has a verified follow-along video and plain safety notes. Educational, not medical advice. */
+const METHODS = (() => {
+  const times = (n, steps) => Array.from({ length: n }, () => steps).flat();
+  const pose = (name, secs, cue) => [name, secs, cue, ''];
+  return [
+    { id: 'wimhof', cat: 'breath', practice: 'meditation', emblem: 'ripple', name: 'Wim Hof–style breathing', mins: 11, level: 'Intermediate', special: 'wimhof',
+      desc: 'Rounds of 30 deep, rhythmic breaths, a relaxed breath-hold after breathing out, then a 15-second recovery breath. Popularised by Wim Hof — often followed by a cool shower finish.',
+      safety: 'Always sit or lie down. Never practise in or near water, while driving or standing. Light-headedness and tingling are common — stop if you feel unwell. Not suitable during pregnancy or if you have epilepsy, a heart condition or high blood pressure; check with your GP first.',
+      video: { id: 'tybOi4hjZFQ', title: 'Guided Wim Hof Method Breathing', ch: 'Wim Hof' }, more: { id: 'IFSL_Qk9qKw', title: 'Wim Hof Method — Safety Information' }, link: 'https://www.wimhofmethod.com' },
+    { id: 'box', cat: 'breath', practice: 'mindfulness', emblem: 'ripple', name: 'Box breathing', mins: 4, level: 'Beginner',
+      desc: 'Breathe in, hold, breathe out, hold — four counts each. A steadying square used by athletes and first responders.',
+      safety: 'Keep holds comfortable; shorten the counts if you feel strained.',
+      video: { id: 'aPYmZOhJF5Q', title: 'Guided Box Breathing (4-4-4-4)', ch: 'Feeling Healing' },
+      steps: times(12, [['Breathe in', 4, 'Slowly through the nose', 'in'], ['Hold', 4, 'Soft shoulders', 'hold'], ['Breathe out', 4, 'Slowly, all the way', 'out'], ['Hold', 4, 'Rest empty', 'hold']]) },
+    { id: 'coherent', cat: 'breath', practice: 'meditation', emblem: 'lotus', name: 'Coherent breathing (5.5)', mins: 5, level: 'Beginner',
+      desc: 'About five and a half breaths a minute — in for 5.5, out for 5.5. A gentle, even rhythm that many people find deeply calming.',
+      safety: 'Breathe quietly through the nose; never force.',
+      video: { id: 'ZXh-IGyBegQ', title: 'Breathing to Regulate Nervous System (5.5 breaths per minute)', ch: 'Pocket Breath Coach' },
+      steps: times(27, [['Breathe in', 5.5, 'Low and slow into the belly', 'in'], ['Breathe out', 5.5, 'Long and smooth', 'out']]) },
+    { id: 'relax478', cat: 'breath', practice: 'meditation', emblem: 'lotus', name: '4-7-8 relaxing breath', mins: 3, level: 'Beginner',
+      desc: 'In for 4, hold for 7, out for 8 through softly pursed lips. A wind-down breath for the evening.',
+      safety: 'Start with four rounds. Sit down — the long hold can make some people light-headed.',
+      video: { id: 'YRPh_GaiL8s', title: 'How To Perform the 4-7-8 Breathing Exercise', ch: 'Andrew Weil, M.D.' },
+      steps: times(8, [['Breathe in', 4, 'Quietly through the nose', 'in'], ['Hold', 7, 'Tongue resting behind the top teeth', 'hold'], ['Breathe out', 8, 'Whoosh out through the mouth', 'out']]) },
+    { id: 'nadi', cat: 'breath', practice: 'yoga', emblem: 'yoga', name: 'Alternate nostril breathing', mins: 5, level: 'Beginner',
+      desc: 'Nadi Shodhana: close one nostril with the thumb, breathe in through the other, switch and breathe out. A balancing yoga breath.',
+      safety: 'Skip it if your nose is blocked. Breathe gently.',
+      video: { id: 'TKNITh99roA', title: 'Guided Alternate Nostril Breathing (Nadi Shodhana) — 5 minutes', ch: 'Feeling Healing' },
+      steps: times(8, [['In — left nostril', 4, 'Thumb closes the right', 'in'], ['Hold', 2, 'Both closed, softly', 'hold'], ['Out — right nostril', 6, 'Ring finger closes the left', 'out'], ['In — right nostril', 4, 'Stay on the right', 'in'], ['Hold', 2, 'Both closed', 'hold'], ['Out — left nostril', 6, 'Thumb closes the right', 'out']]) },
+
+    { id: 'sunsal', cat: 'yoga', practice: 'yoga', emblem: 'yoga', name: 'Sun Salutation flow', mins: 8, level: 'Beginner',
+      desc: 'Surya Namaskar — twelve linked postures that warm the whole body, each move matched to a breath. Three gentle rounds.',
+      safety: 'Bend your knees in forward folds and lower to the knees from plank if you need to. Move within your own range.',
+      video: { id: '8AakYeM23sI', title: '10 min Sun Salutation Practice', ch: 'Yoga With Adriene' },
+      steps: times(3, [['Mountain pose', 10, 'Stand tall, palms together at the heart', 'out'], ['Upward salute', 6, 'Sweep the arms up', 'in'], ['Forward fold', 6, 'Hinge at the hips, knees soft', 'out'], ['Half lift', 5, 'Long flat back, hands on shins', 'in'], ['Plank', 8, 'Step back, strong and steady', 'out'], ['Knees, chest, chin', 6, 'Lower slowly to the mat', 'out'], ['Cobra', 6, 'Lift the chest, elbows hugging in', 'in'], ['Downward dog', 20, 'Hips high, pedal the feet — five breaths', ''], ['Step forward', 6, 'Hands between the feet, half lift', 'in'], ['Forward fold', 6, 'Let the head hang', 'out'], ['Rise up', 6, 'Sweep the arms up', 'in'], ['Mountain pose', 6, 'Hands to the heart', 'out']]) },
+    { id: 'bedtime', cat: 'yoga', practice: 'yoga', emblem: 'lotus', name: 'Bedtime yoga', mins: 10, level: 'Beginner',
+      desc: 'Slow floor postures to release the day and settle the nervous system before sleep.',
+      safety: 'Use pillows freely. Skip legs-up-the-wall if you have glaucoma or are in late pregnancy.',
+      video: { id: 'CLDHeV9OI5U', title: '10-Minute Bedtime Yoga', ch: 'Yoga With Adriene' },
+      steps: [pose("Child's pose", 60, 'Knees wide, forehead down, long slow breaths'), pose('Cat–cow', 60, 'Arch on the in-breath, round on the out-breath'), pose('Seated forward fold', 60, 'Knees bent, let the spine soften'), pose('Twist — right', 45, 'Lying down, knees fall to the right'), pose('Twist — left', 45, 'Knees fall to the left'), pose('Happy baby', 45, 'Hold the feet, rock gently'), pose('Legs up the wall', 120, 'Heavy legs, quiet mind'), pose('Rest (savasana)', 120, 'Let the whole body be held')] },
+    { id: 'chair', cat: 'yoga', practice: 'yoga', emblem: 'yoga', name: 'Chair yoga', mins: 8, level: 'Everyone',
+      desc: 'Seated stretches for the desk, the sofa or anyone with limited mobility — neck, shoulders, spine, wrists and ankles.',
+      safety: 'Use a sturdy chair without wheels. Keep movements small and pain-free.',
+      video: { id: '1DYH5ud3zHo', title: 'Gentle Chair Yoga for Beginners and Seniors', ch: 'Yoga with Kassandra' },
+      steps: [pose('Settle and breathe', 40, 'Feet flat, sit tall'), pose('Neck rolls', 50, 'Half circles, ear to shoulder'), pose('Shoulder rolls', 40, 'Big slow circles backwards'), pose('Seated cat–cow', 60, 'Hands on knees, arch and round'), pose('Side stretch — right', 30, 'Left arm reaches over'), pose('Side stretch — left', 30, 'Right arm reaches over'), pose('Twist — right', 30, 'Hand to the chair back'), pose('Twist — left', 30, 'Hand to the chair back'), pose('Wrists and fingers', 40, 'Circle the wrists, spread the fingers'), pose('Ankle circles', 40, 'Both directions, one foot at a time'), pose('Rest', 60, 'Hands in the lap, eyes closed')] },
+
+    { id: 'brocades', cat: 'taichi', practice: 'taichi', emblem: 'yinyang', name: 'Eight Brocades (Ba Duan Jin)', mins: 9, level: 'Beginner',
+      desc: 'A classic qigong set of eight flowing movements, practised in China for centuries. Slow, standing, breath-led.',
+      safety: 'Knees soft, never locked. Sit for any movement that challenges your balance.',
+      video: { id: 'MGGHJF5kbfU', title: '8 Brocades Qigong Follow-Along for Beginners', ch: 'Regeneration Tai Chi' },
+      steps: [pose('Stand in stillness', 40, 'Feet hip-width, knees soft, breathe low'), pose('Two hands hold up the heavens', 60, 'Interlace the fingers, press up, lower'), pose('Drawing the bow', 60, 'Step wide, draw the bow left and right'), pose('Separating heaven and earth', 60, 'One hand presses up, one presses down'), pose('Wise owl gazes backwards', 60, 'Turn the head gently, look behind'), pose('Sway the head and tail', 60, 'Horse stance, sway side to side'), pose('Hands to the feet', 60, 'Slide the hands down the legs, rise slowly'), pose('Clench the fists, gaze fiercely', 60, 'Punch slowly, eyes bright'), pose('Bouncing on the toes', 40, 'Rise and drop softly to the heels'), pose('Gather and close', 40, 'Hands rest on the belly')] },
+    { id: 'taichi5', cat: 'taichi', practice: 'taichi', emblem: 'yinyang', name: 'Tai chi — five flowing moves', mins: 7, level: 'Beginner',
+      desc: 'Wu ji standing, commencement, cloud hands, brush knee and closing — the heart of a beginner’s tai chi, slow as a cloud.',
+      safety: 'Move slowly with the breath. Use a chair for balance if you need it.',
+      video: { id: 'cEvSqHZIj8w', title: 'Tai Chi For Beginners: 7-Minute Routine', ch: 'Phoenix Mountain Tai Chi' },
+      steps: [pose('Wu ji — standing', 60, 'Feet parallel, crown lifted, arms hang'), pose('Commencement', 60, 'Float the arms up on the in-breath, sink on the out-breath'), pose('Cloud hands', 100, 'Hands circle past the face as the waist turns'), pose('Brush knee', 100, 'Step, brush past the knee, push forward softly'), pose('Closing', 60, 'Cross the hands, lower them, stand still')] },
+    { id: 'qigong-morning', cat: 'taichi', practice: 'taichi', emblem: 'yinyang', name: 'Morning qigong', mins: 6, level: 'Beginner',
+      desc: 'Wake the body gently: shaking, tapping, swinging and gathering energy.',
+      safety: 'Tap lightly. Skip shaking if you have dizziness.',
+      video: { id: 'YtucUw4LI8c', title: '15-Minute Morning Qigong — Beginner Routine', ch: 'Zach Scannapieco' },
+      steps: [pose('Shake it out', 60, 'Bounce gently through the knees, let the arms flop'), pose('Tapping', 60, 'Loose fists tap arms, chest and legs'), pose('Swinging arms', 60, 'Turn the waist, let the arms swing'), pose('Lifting the sky', 60, 'Arms rise, breathe in; lower, breathe out'), pose('Gathering', 60, 'Scoop energy in, hands to the belly'), pose('Stillness', 60, 'Feel the tingle and warmth')] },
+
+    { id: 'bodyscan', cat: 'mind', practice: 'mindfulness', emblem: 'ripple', name: 'Body scan', mins: 8, level: 'Beginner',
+      desc: 'Move your attention slowly from your feet to the top of your head, noticing without changing anything.',
+      safety: 'If any area feels distressing, simply move on or open your eyes.',
+      video: { id: 'BlWo7sqWLNk', title: 'Guided Body Scan Meditation (10 minutes)', ch: 'MindfulPeace' },
+      steps: [pose('Arrive', 45, 'Lie or sit comfortably; feel the body being supported'), pose('Feet', 50, 'Toes, soles, heels — warmth, coolness, tingling'), pose('Legs', 50, 'Calves, knees, thighs'), pose('Hips and belly', 50, 'Feel the belly rise and fall'), pose('Back and chest', 50, 'Notice the breath moving the ribs'), pose('Hands and arms', 50, 'Fingers, palms, forearms, shoulders'), pose('Neck and face', 50, 'Soften the jaw, the eyes, the forehead'), pose('Whole body', 60, 'Feel the body as one field of sensation'), pose('Return', 30, 'Wiggle fingers and toes')] },
+    { id: 'pmr', cat: 'mind', practice: 'meditation', emblem: 'lotus', name: 'Progressive muscle relaxation', mins: 7, level: 'Beginner',
+      desc: 'Tense a muscle group for five seconds, then let it go and feel the difference. Great before sleep.',
+      safety: 'Tense gently (about half effort). Skip any area that is injured or painful.',
+      video: { id: '2IJUD-e14FY', title: 'Guided Progressive Muscle Relaxation', ch: 'Hospital for Special Surgery' },
+      steps: ['Feet', 'Calves', 'Thighs', 'Belly', 'Hands', 'Arms', 'Shoulders', 'Face'].flatMap(m => [[`Tense — ${m.toLowerCase()}`, 5, 'Squeeze gently and hold', 'in'], [`Release — ${m.toLowerCase()}`, 15, 'Let go completely; notice the softness', 'out']]).concat([pose('Rest', 60, 'Feel the whole body heavy and warm')]) },
+    { id: 'nidra', cat: 'mind', practice: 'meditation', emblem: 'lotus', name: 'Yoga nidra — yogic sleep', mins: 10, level: 'Everyone',
+      desc: 'A deeply restful guided practice lying down: an intention, a journey of awareness through the body, and a return.',
+      safety: 'It is fine to fall asleep. Avoid while driving.',
+      video: { id: '9r8jXUvsi3w', title: '20 minute yoga nidra — reset your nervous system', ch: 'Ally Boothroyd' },
+      steps: [pose('Lie down', 60, 'Blanket, pillow, eyes closed'), pose('Intention', 45, 'Silently repeat a short, kind sentence — your sankalpa'), pose('Rotation of awareness', 150, 'Right hand thumb, fingers, palm… let your attention travel'), pose('Breath', 90, 'Count breaths backwards from 27'), pose('Heavy and light', 60, 'Feel the body heavy… then light as a feather'), pose('Inner image', 90, 'A calm place: sand, sea, a warm sun'), pose('Intention again', 30, 'Repeat your sankalpa'), pose('Return', 45, 'Deepen the breath, stretch slowly')] },
+    { id: 'kindness', cat: 'mind', practice: 'mindfulness', emblem: 'lotus', name: 'Loving-kindness', mins: 6, level: 'Everyone', special: 'kindness',
+      desc: 'Offer kind wishes to yourself, someone you love and everyone. With the living Tree of Life.',
+      safety: 'If it feels hard to send kindness to yourself, start with someone easy to love.',
+      video: { id: '-d_AA9H4z9U', title: 'Loving Kindness Meditation to Develop Mindfulness and Compassion', ch: 'Josh Wise' } },
+
+    { id: 'grounding', cat: 'joy', practice: 'mindfulness', emblem: 'ripple', name: 'Barefoot grounding', mins: 6, level: 'Everyone',
+      desc: 'Stand or walk barefoot on grass, sand or earth and come back to your senses with the 5-4-3-2-1 practice. Part of the GROUND pillar.',
+      safety: 'Check the ground for glass and sharp objects. Avoid in very cold weather or if you have reduced feeling in your feet.',
+      video: { id: '30VMIEmA114', title: 'The 5-4-3-2-1 Method: A Grounding Exercise', ch: 'The Partnership In Education' },
+      steps: [pose('Feet on the earth', 60, 'Shoes off — feel the ground'), pose('5 things you can see', 45, 'Name them slowly'), pose('4 things you can feel', 45, 'Grass, air, sun, clothes'), pose('3 things you can hear', 45, 'Near and far'), pose('2 things you can smell', 40, 'Earth, salt, leaves'), pose('1 thing you can taste', 30, 'Or one good thing about today'), pose('Slow walk', 90, 'Feel every step land')] },
+    { id: 'laughdrill', cat: 'joy', practice: 'laughter', emblem: 'laugh', name: 'Laughter yoga drills', mins: 5, level: 'Everyone',
+      desc: 'Laughter for no reason — the body can’t tell fake from real, and soon it becomes real. Five classic drills.',
+      safety: 'Avoid if you have had recent surgery, a hernia or uncontrolled high blood pressure. Stop if you leak or feel pain.',
+      video: { id: 'wfB58mhciAE', title: 'Five minutes instructional laughter yoga with Dr Madan Kataria', ch: 'Laughter Guru' },
+      steps: [pose('Ho-ho, ha-ha-ha', 40, 'Clap 1-2, 1-2-3 and chant'), pose('Greeting laugh', 45, 'Wave and laugh as if meeting old friends'), pose('Milkshake laugh', 45, 'Pour between two glasses, drink — and laugh!'), pose('Lion laugh', 40, 'Tongue out, hands like paws, roar with laughter'), pose('Silent laugh', 45, 'Laugh with no sound — shoulders shaking'), pose('Very good, very good, yay!', 30, 'Arms up'), pose('Calm breath', 40, 'Hand on the belly, smile')] },
+    { id: 'soundbath', cat: 'joy', practice: 'meditation', emblem: 'lotus', name: 'Sound bath', mins: 10, level: 'Everyone', special: 'sound',
+      desc: 'Lie back and let a soft resonant hum and bells wash over you. Built into DELTA — no download needed.',
+      safety: 'Keep the volume low. Not while driving.',
+      video: { id: 'BU_4OiqUn7U', title: '10 minute gong meditation', ch: 'Temple Sounds' } },
+  ];
+})();
+const METHOD_CATS = [['breath', 'Breathwork', '🌬'], ['yoga', 'Yoga', '🧘'], ['taichi', 'Tai chi & qigong', '☯'], ['mind', 'Mindfulness & deep rest', '🌙'], ['joy', 'Grounding & joy', '🌿']];
+
 /* Shared by the browser (global) and the server (require). */
 (function (exportsObj) {
   if (typeof module !== 'undefined' && module.exports) module.exports = exportsObj;
   else self.DeltaData = exportsObj;
-})({ PILLARS, EPISODES, VIDEOS, PARTNERS, FAQS, JOKES, MINERALS, DEMO_RESULT, TOXIC, RATIOS, RULESETS, CURRENT_RULESET, SAFETY_QS, PRACTICES, CENTRE_VIDEOS, BOOKS, SESSIONS });
+})({ PILLARS, EPISODES, VIDEOS, PARTNERS, FAQS, JOKES, MINERALS, DEMO_RESULT, TOXIC, RATIOS, RULESETS, CURRENT_RULESET, SAFETY_QS, PRACTICES, CENTRE_VIDEOS, BOOKS, SESSIONS, METHODS, METHOD_CATS });

@@ -163,7 +163,7 @@ function footer() {
     <div><b class="gold sm">Community</b><a href="#/centre">Community Centre</a><a href="#/centre/meditation">Meditation</a><a href="#/centre/yoga">Yoga</a><a href="#/centre/taichi">Tai Chi & Qi Gong</a><a href="#/centre/laughter">Laughter & comedy</a></div>
     <div><b class="gold sm">Listen & watch</b><a href="#/podcast">The DELTA Podcast</a><a href="#/mineral-man">Meet Mineral Man</a><a href="#/partners">Partner Collective</a></div>
     <div><b class="gold sm">Help</b><a href="#/about">About & contact</a><a href="#/faq">FAQs</a><a href="#/legal">Privacy, terms & disclaimers</a><a href="#/legal">Cookie choices</a></div>
-  </div><div class="base">${socialButtons_()}DELTA · Analysis · Intelligence · Method · Awakening Human Potential<br>DELTA is an educational wellbeing service. Hair Tissue Mineral Analysis is not a standalone diagnostic tool, and nothing here is medical advice, diagnosis or treatment.</div></footer>`;
+  </div><div class="base">${socialButtons_()}<div class="mb2">${motionButton('xs')}</div>DELTA · Analysis · Intelligence · Method · Awakening Human Potential<br>DELTA is an educational wellbeing service. Hair Tissue Mineral Analysis is not a standalone diagnostic tool, and nothing here is medical advice, diagnosis or treatment.</div></footer>`;
 }
 function demobar() {
   if (!S.demo) return '';
@@ -884,7 +884,14 @@ function aiWidget(path) {
   </section>`;
 }
 /* Progressive enhancement after each render: responsive images, fade-ins, scroll reveals, focus & title. */
-const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* Motion: follows the device's reduce-motion setting unless the visitor chooses Play or Pause (saved in this browser). */
+const deviceCalm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const motionPref = () => { try { return localStorage.getItem('delta_motion') || ''; } catch { return ''; } };
+function applyMotion() { const m = motionPref(), h = document.documentElement; h.classList.toggle('motion-on', m === 'on'); h.classList.toggle('motion-off', m === 'off'); }
+applyMotion();
+const motionMoving = () => motionPref() === 'on' || (!deviceCalm && motionPref() !== 'off');
+function motionButton(cls = '') { const moving = motionMoving(); return `<button class="motion-btn ${cls}" data-act="motion" aria-pressed="${!moving}">${moving ? '⏸ Pause motion' : '▶ Play animations'}</button>`; }
+const reduceMotion = deviceCalm && motionPref() !== 'on';
 let revealer = null, lastPath = null;
 function enhance(path) {
   const main = document.getElementById('main');
@@ -943,6 +950,7 @@ function download(name, text, type = 'application/json') {
 /* ───────────────────────── actions (buttons) ───────────────────────── */
 const ds = el => el.dataset;
 const A = {
+  motion() { try { localStorage.setItem('delta_motion', motionMoving() ? 'off' : 'on'); } catch { /* storage unavailable */ } applyMotion(); render(); },
   menu(el) { const n = document.getElementById('mainnav'), open = n.classList.toggle('open'); el.setAttribute('aria-expanded', open); el.setAttribute('aria-label', open ? 'Close menu' : 'Open menu'); },
   skip(el, ev) { ev.preventDefault(); const m = document.getElementById('main'); m?.focus(); m?.scrollIntoView(); },
   nav(el) { go(el.dataset.to); },

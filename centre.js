@@ -46,9 +46,11 @@ R['/centre'] = (q = {}) => {
   <section class="centre-hero">
     <div class="centre-copy"><div class="kicker">The DELTA Community Centre</div><h1 class="mt3">A calmer place to <span class="metal">gather</span></h1>
       <p class="lg muted mt4">Meditation, yoga, tai chi, mindfulness, laughter and comedy — around the six DELTA pillars. Drop in, breathe, watch, read, and practise together.</p>
-      <div class="flex mt6"><button class="btn" data-act="breathe">🌬 Breathe with me</button><button class="btn ghost" data-act="sit">🔔 Meditation timer</button></div></div>
+      <div class="flex mt6"><button class="btn" data-act="breathe">🌬 Breathe with me</button><a class="btn ghost" href="#/centre/methods">✦ Guided methods</a><button class="btn ghost" data-act="sit">🔔 Meditation timer</button></div>
+      <p class="xs muted mt4">${motionMoving() ? 'Tap any circle to step inside. ' : 'Your device asks for less motion, so the centre is still. '}${motionButton('xs')}</p></div>
     <div class="orbit" aria-label="Rooms of the Community Centre">
       <div class="orbit-glow" aria-hidden="true"></div><div class="orbit-fol" aria-hidden="true">${LIFE.flower('bg')}</div>
+      <svg class="life orbit-lights" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="43" pathLength="1" class="ol out"/><circle cx="50" cy="50" r="43" pathLength="1" class="ol out b"/><circle cx="50" cy="50" r="25" pathLength="1" class="ol in"/><circle cx="50" cy="50" r="25" pathLength="1" class="ol in b"/></svg>
       ${orbit(pracs, 'ring-out', 'var(--r-outer)')}${orbit(pills, 'ring-in', 'var(--r-inner)')}
       <a class="core" href="#/centre" aria-label="Community Centre"><img src="brand/logo.jpg" alt="" width="88" height="88"><span>Community<br>Centre</span></a>
     </div>
@@ -57,6 +59,11 @@ R['/centre'] = (q = {}) => {
   <section class="container centre-sec"><h2>The practice rooms</h2>
     <div class="grid md3 mt6">${PRACTICES.map(p => `<a class="card room" href="#/centre/${p.id}"><div class="room-em">${EMBLEM[p.emblem]}</div><div><div class="kicker" style="font-size:.66rem">${esc(p.tag)}</div><h3 class="mt1" style="font-size:1.2rem">${esc(p.name)}</h3><p class="sm muted mt2">${esc(p.desc)}</p>
       <p class="xs gold mt3">${c.videos.filter(v => v.practice === p.id).length} videos · ${c.books.filter(b => b.practice === p.id).length} books · ${c.sessions.filter(s => s.practice === p.id).length} weekly session${c.sessions.filter(s => s.practice === p.id).length === 1 ? '' : 's'}</p></div></a>`).join('')}</div></section>
+
+  <section class="container centre-sec"><div class="kicker">Guided methods</div><h2 class="mt2">Breathe, stretch, flow, rest</h2>
+    <p class="sm muted mt2">Wim Hof–style breathing, yoga, tai chi, qigong, body scans, yoga nidra, grounding and laughter — each with a living guide that shows every breath and every move.</p>
+    <div class="grid md3 mt6">${['wimhof', 'sunsal', 'brocades', 'bodyscan', 'nidra', 'laughdrill'].map(k => methodCard(methodById(k))).join('')}</div>
+    <div class="flex mt6" style="justify-content:center"><a class="btn" href="#/centre/methods">✦ See all ${METHODS.length} guided methods</a></div></section>
 
   ${lifeSection()}
 
@@ -85,6 +92,7 @@ R['/centre'] = (q = {}) => {
 
 /* ── a practice room ── */
 function centreRoom(id) {
+  if (id === 'methods') return methodsPage();
   const p = practiceById(id); if (!p) return notFound();
   const u = me(), member = u && hasAccess(u), c = S.centre;
   const vids = c.videos.filter(v => v.practice === id), books = c.books.filter(b => b.practice === id), sess = c.sessions.filter(s => s.practice === id);
@@ -93,6 +101,7 @@ function centreRoom(id) {
   return `${u && !isStaff(u) ? portalNav() : ''}` + page(`${back('/centre', 'Community Centre')}
   <div class="room-hero mt6"><div class="room-big">${EMBLEM[p.emblem]}</div><div><div class="kicker">${esc(p.tag)}</div><h1 class="mt2">${esc(p.name)}</h1><p class="lg muted mt3">${esc(p.desc)}</p>
     <div class="flex mt4"><button class="btn xs" data-act="breathe">🌬 Breathe</button><button class="btn ghost xs" data-act="sit">🔔 Timer</button>${pillar ? `<a class="btn ghost xs" href="#/pillars/${pillar.id}">${pillar.icon} ${pillar.name} pillar</a>` : ''}</div>${gentle}</div></div>
+  ${(() => { const ms = METHODS.filter(m => m.practice === id || (id === 'laughter' && m.cat === 'joy') || (id === 'comedy' && m.id === 'laughdrill')); return ms.length ? `<h2 class="mt10 lined">Guided methods</h2><div class="grid md3 mt4">${ms.map(methodCard).join('')}</div><p class="sm mt3"><a href="#/centre/methods">All ${METHODS.length} guided methods →</a></p>` : ''; })()}
   <h2 class="mt10">Watch & follow along</h2><div class="grid md3 mt4">${vids.map(centreVideoCard).join('') || '<p class="muted">Videos coming soon.</p>'}</div>
   ${books.length ? `<h2 class="mt10">The reading shelf</h2><div class="shelf mt4">${books.map((b, i) => `<a class="book" href="${bookLink(b)}" target="_blank" rel="noopener" style="--i:${i}"><span class="spine"><b>${esc(b.title)}</b><i>${esc(b.author)}</i></span><span class="b-why">${esc(b.why)}<span class="xs gold">Find this book ↗</span></span></a>`).join('')}</div>` : ''}
   ${sess.length ? `<h2 class="mt10">Weekly sessions</h2><div class="stack mt4">${sess.map(s => `<div class="session"><div class="s-body"><div class="xs gold">${DAYS[s.day]} · ${esc(s.time)} · ${s.mins} min</div><b>${esc(s.title)}</b><div class="xs muted">${esc(s.where)} · ${s.going} going</div></div>${member ? `<button class="btn ${s.mine ? '' : 'ghost'} xs" data-act="rsvp" data-id="${s.id}">${s.mine ? '✓ Going' : 'I’ll join'}</button>` : `<a class="xs" href="#/join">Join to save a place</a>`}</div>`).join('')}</div>` : ''}
@@ -152,13 +161,13 @@ function soundEngine() {
   };
   return api;
 }
-function openSit(sound = 'none') {
+function openSit(sound = 'none', startMins = 5) {
   const el = relaxShell('Meditation timer', `<h2 class="metal">Sit for a while</h2>
-    <div class="chips mt4" role="group" aria-label="Length">${[3, 5, 10, 20].map((m, i) => `<button class="chip ${m === 5 ? 'on' : ''}" data-min="${m}">${m} min</button>`).join('')}</div>
+    <div class="chips mt4" role="group" aria-label="Length">${[3, 5, 10, 20].map(m => `<button class="chip ${m === startMins ? 'on' : ''}" data-min="${m}">${m} min</button>`).join('')}</div>
     <div class="chips mt3" role="group" aria-label="Background sound">${[['none', 'Silence'], ['ocean', '🌊 Ocean'], ['rain', '🌧 Rain'], ['hum', '〰 Soft hum']].map(([k, l]) => `<button class="chip ${k === sound ? 'on' : ''}" data-snd="${k}">${l}</button>`).join('')}</div>
     <div class="sit-ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="52" class="track"/><circle cx="60" cy="60" r="52" class="prog" pathLength="1"/></svg><div class="sit-time">5:00</div><div class="lotus-mini">${EMBLEM.lotus}</div></div>
     <p class="sm muted" aria-live="polite"><span class="sit-msg">A bell will sound at the start and the end.</span></p><button class="btn mt4 sit-go">Begin</button>`);
-  let mins = 5, left = 300, running = false;
+  let mins = startMins, left = startMins * 60, running = false;
   const engine = soundEngine(); relax.audio = engine;
   const prog = el.querySelector('.prog'), time = el.querySelector('.sit-time'), msg = el.querySelector('.sit-msg'), go = el.querySelector('.sit-go');
   const show = () => { time.textContent = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}`; prog.style.strokeDashoffset = String(1 - left / (mins * 60)); };
