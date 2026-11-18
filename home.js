@@ -29,6 +29,8 @@ R['/'] = () => {
 
   <section class="stats-strip"><div class="container stats">${stats.map(([n, l], i) => `<div class="stat rise d${i + 1}"><b style="--n:${n}" aria-label="${n}"></b><span>${l}</span></div>`).join('')}</div></section>
 
+  ${chapterCards()}
+
   <section class="container home-sec" id="home-today"><div class="kicker center">Today in the DELTA community</div><h2 class="center mt2 big-h">${greeting()} <span class="metal">✦</span></h2>
     <div class="grid md2 mt8" style="align-items:start">
       <div class="card today-card">${messageHTML(false)}<div class="flex mt4"><a class="btn" href="#/centre/today">Open today’s plan</a><button class="btn ghost" data-act="breathe">🌬 Breathe with me</button></div></div>

@@ -152,18 +152,15 @@ function header() {
     <a class="brand" href="#/"><span class="logo-live">${logo()}</span><div><div class="t1">DELTA</div><div class="t2">Analysis · Intelligence · Method</div></div></a>
     <button class="menu-btn" data-act="menu" aria-expanded="false" aria-controls="mainnav" aria-label="Open menu"><span></span></button>
     <nav class="main" id="mainnav" aria-label="Main"><div>
-      ${a('/how-it-works', 'How it works')}${a('/pillars', 'Six Pillars')}${a('/centre', 'Community')}${a('/awakening', 'Awakening')}${a('/podcast', 'Podcast')}${a('/mineral-man', 'Mineral Man')}${a('/partners', 'Partners')}${a('/faq', 'FAQs')}
+      ${chapterNav(path.split('?')[0])}<span class="nav-sp"></span>
       ${u ? (isStaff(u) ? a('/admin', 'Admin', 'strong') : '') + a('/portal', 'My Portal', 'strong') : a('/login', 'Sign in') + a('/register', 'Sign up', 'strong')}
     </div></nav></div></header>`;
 }
 function footer() {
   return `<footer class="site"><div class="cols">
     <div><a class="brand" href="#/"><span class="logo-live">${logo()}</span><div><div class="t1">DELTA</div><div class="t2">Awakening Human Potential</div></div></a><div class="foot-tree" aria-hidden="true">${LIFE.tree()}</div></div>
-    <div><b class="gold sm">Explore</b><a href="#/how-it-works">How DELTA works</a><a href="#/analysis">Analysis</a><a href="#/intelligence">Intelligence</a><a href="#/pillars">Method — six pillars</a><a href="#/awakening">Awakening</a></div>
-    <div><b class="gold sm">Community</b><a href="#/centre">Community Centre</a><a href="#/centre/meditation">Meditation</a><a href="#/centre/yoga">Yoga</a><a href="#/centre/taichi">Tai Chi & Qi Gong</a><a href="#/centre/laughter">Laughter & comedy</a></div>
-    <div><b class="gold sm">Listen & watch</b><a href="#/podcast">The DELTA Podcast</a><a href="#/mineral-man">Meet Mineral Man</a><a href="#/partners">Partner Collective</a></div>
-    <div><b class="gold sm">Help</b><a href="#/about">About & contact</a><a href="#/faq">FAQs</a><a href="#/legal">Privacy, terms & disclaimers</a><a href="#/legal">Cookie choices</a></div>
-  </div><div class="base">${socialButtons_()}<div class="mb2">${motionButton('xs')}</div>DELTA · Analysis · Intelligence · Method · Awakening Human Potential<br>DELTA is an educational wellbeing service. Hair Tissue Mineral Analysis is not a standalone diagnostic tool, and nothing here is medical advice, diagnosis or treatment.</div></footer>`;
+    ${footerMap()}
+  </div><div class="base">${socialButtons_()}<div class="mb2">${motionButton('xs')}</div>DELTA · Analysis · Intelligence · Method · Awakening Human Potential<br><a href="#/legal">Privacy, terms & disclaimers</a> · <a href="#/legal">Cookie choices</a> · <a href="#/about">Contact</a><br>DELTA is an educational wellbeing service. Hair Tissue Mineral Analysis is not a standalone diagnostic tool, and nothing here is medical advice, diagnosis or treatment.</div></footer>`;
 }
 function demobar() {
   if (!S.demo) return '';
@@ -817,7 +814,7 @@ function render() {
   else html = R[path] ? R[path](q, parts) : notFound();
   } catch (e) { console.error(e); html = page(`<div class="card hl"><h1>This page didn’t load</h1><p class="muted mt3">Something went wrong showing this page. The rest of DELTA still works.</p><div class="flex mt6"><a class="btn" href="#/">Go to the homepage</a>${STATIC ? '<button class="btn ghost" data-act="start-fresh">Start the demo fresh</button>' : ''}</div><p class="xs muted mt4">Details: ${esc(e.message)}</p></div>`, 'narrow'); }
   document.body.dataset.route = parts[0] || 'home';
-  document.getElementById('app').innerHTML = responsiveImages(`<a class="skip" href="#main" data-act="skip">Skip to content</a>${demobar()}${header()}${html}${footer()}${aiWidget(path)}`);
+  document.getElementById('app').innerHTML = responsiveImages(`<a class="skip" href="#main" data-act="skip">Skip to content</a>${demobar()}${header()}${path.startsWith('/admin') ? '' : journeyBar(path)}${html}${path.startsWith('/admin') || path === '/' ? '' : nextSteps(path)}${footer()}${aiWidget(path)}`);
   document.title = 'DELTA — Awakening Human Potential';
   for (const id of ['chatlog', 'ailog']) { const log = document.getElementById(id); if (log) log.scrollTop = log.scrollHeight; }
   enhance(path);
@@ -864,7 +861,23 @@ const motionMoving = () => motionPref() === 'on' || (!deviceCalm && motionPref()
 function motionButton(cls = '') { const moving = motionMoving(); return `<button class="motion-btn ${cls}" data-act="motion" aria-pressed="${!moving}">${moving ? '⏸ Pause motion' : '▶ Play animations'}</button>`; }
 const reduceMotion = deviceCalm && motionPref() !== 'on';
 let revealer = null, lastPath = null;
+/* Animated titles: every page title rises in word by word; section headings glide in when scrolled to. */
+function animateTitles() {
+  const h1 = document.querySelector('main h1');
+  if (h1 && !h1.dataset.anim && !h1.querySelector('.w, .tw')) {
+    let i = 0; const out = [];
+    h1.childNodes.forEach(n => {
+      if (n.nodeType === 3) n.textContent.split(/(\s+)/).forEach(w => out.push(/^\s*$/.test(w) ? document.createTextNode(w) : Object.assign(document.createElement('span'), { className: 'tw', textContent: w, style: `--i:${i++}` })));
+      else { const sp = document.createElement('span'); sp.className = 'tw'; sp.style.setProperty('--i', i++); sp.appendChild(n.cloneNode(true)); out.push(sp); }
+    });
+    h1.replaceChildren(...out); h1.dataset.anim = '1'; h1.classList.add('title-anim');
+  }
+  const hs = document.querySelectorAll('main h2:not(.h-anim)');
+  const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('h-in'); io.unobserve(e.target); } }), { threshold: .2 }) : null;
+  hs.forEach(h => { h.classList.add('h-anim'); io ? io.observe(h) : h.classList.add('h-in'); });
+}
 function enhance(path) {
+  animateTitles();
   const main = document.getElementById('main');
   document.querySelectorAll('main img[srcset], .vthumb img').forEach(img => { if (!img.complete) { img.classList.add('fade'); img.addEventListener('load', () => img.classList.add('loaded'), { once: true }); } });
   if (!reduceMotion && 'IntersectionObserver' in window) {
