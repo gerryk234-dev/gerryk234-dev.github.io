@@ -111,6 +111,9 @@ function lifeSection() {
     <div class="flex mt6" style="justify-content:center"><button class="btn" data-act="kindness">♥ Loving-kindness practice</button><button class="btn ghost" data-act="kindness" data-who="all">Send love to everyone</button></div></section>`;
 }
 
+/* Every page lives in the same light: a slowly turning Flower of Life and a Tree of Life behind the content. */
+{ const bg = document.createElement('div'); bg.className = 'life-bg'; bg.setAttribute('aria-hidden', 'true'); bg.innerHTML = `<div class="lb-fol">${LIFE.flower('bg')}</div><div class="lb-tree">${LIFE.tree()}</div><div class="lb-ankh">${LIFE.ankh()}</div>`; document.body.prepend(bg); }
+
 /* Symbols start drawing when they scroll into view (so the bloom is seen, not missed). */
 const lifeIO = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); lifeIO.unobserve(e.target); } }), { threshold: 0.25 }) : null;
 const watchLife = root => root.querySelectorAll?.('svg.life:not(.on)').forEach(s => (lifeIO ? lifeIO.observe(s) : s.classList.add('on')));

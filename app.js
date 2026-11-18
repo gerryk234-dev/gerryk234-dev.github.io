@@ -149,7 +149,7 @@ function header() {
   let n = 0;
   const a = (to, label, cls = '') => `<a href="#${to}" style="--i:${n++}" class="${cls} ${path === to || (to !== '/' && path.startsWith(to + '/')) ? 'active' : ''}"${path === to ? ' aria-current="page"' : ''}>${label}</a>`;
   return `<header class="site"><div class="container">
-    <a class="brand" href="#/">${logo()}<div><div class="t1">DELTA</div><div class="t2">Analysis · Intelligence · Method</div></div></a>
+    <a class="brand" href="#/"><span class="logo-live">${logo()}</span><div><div class="t1">DELTA</div><div class="t2">Analysis · Intelligence · Method</div></div></a>
     <button class="menu-btn" data-act="menu" aria-expanded="false" aria-controls="mainnav" aria-label="Open menu"><span></span></button>
     <nav class="main" id="mainnav" aria-label="Main"><div>
       ${a('/how-it-works', 'How it works')}${a('/pillars', 'Six Pillars')}${a('/centre', 'Community')}${a('/awakening', 'Awakening')}${a('/podcast', 'Podcast')}${a('/mineral-man', 'Mineral Man')}${a('/partners', 'Partners')}${a('/faq', 'FAQs')}
@@ -158,7 +158,7 @@ function header() {
 }
 function footer() {
   return `<footer class="site"><div class="cols">
-    <div><a class="brand" href="#/">${logo()}<div><div class="t1">DELTA</div><div class="t2">Awakening Human Potential</div></div></a></div>
+    <div><a class="brand" href="#/"><span class="logo-live">${logo()}</span><div><div class="t1">DELTA</div><div class="t2">Awakening Human Potential</div></div></a><div class="foot-tree" aria-hidden="true">${LIFE.tree()}</div></div>
     <div><b class="gold sm">Explore</b><a href="#/how-it-works">How DELTA works</a><a href="#/analysis">Analysis</a><a href="#/intelligence">Intelligence</a><a href="#/pillars">Method — six pillars</a><a href="#/awakening">Awakening</a></div>
     <div><b class="gold sm">Community</b><a href="#/centre">Community Centre</a><a href="#/centre/meditation">Meditation</a><a href="#/centre/yoga">Yoga</a><a href="#/centre/taichi">Tai Chi & Qi Gong</a><a href="#/centre/laughter">Laughter & comedy</a></div>
     <div><b class="gold sm">Listen & watch</b><a href="#/podcast">The DELTA Podcast</a><a href="#/mineral-man">Meet Mineral Man</a><a href="#/partners">Partner Collective</a></div>
@@ -167,15 +167,16 @@ function footer() {
 }
 function demobar() {
   if (!S.demo) return '';
-  const u = me();
-  return `<div class="demobar"><div class="container">
-    <span><b>Demo</b> · ${u ? esc(u.name) : 'visitor'} · ${fmtDate(now())}${S.clockDays ? ` (+${S.clockDays}d)` : ''}</span>
-    <a href="#/login" style="color:var(--gold)">Switch user</a>
-    <details class="demotools"${demoOpen ? ' open' : ''}><summary>Demo tools</summary><div class="panel">
-      <span>Payments: ${S.payments === 'stripe' ? 'Stripe' : 'test'} · email: ${S.mail === 'smtp' ? 'SMTP' : 'logged'}</span>
-      <button data-act="clock" data-days="30">+30 days</button><button data-act="clock" data-days="90">+90 days</button>${S.clockDays ? '<button data-act="clock" data-days="0">Back to today</button>' : ''}
-      ${STATIC ? '<a href="#/dev/mailbox" style="color:var(--gold)">Dev mailbox</a>' : '<a href="/dev/mailbox" target="_blank" rel="noopener" style="color:var(--gold)">Dev mailbox</a>'}<button data-act="reset">Reset demo</button></div></details>
-  </div></div>`;
+  const u = me(), ps = S.personas || [];
+  const quick = ['Sam', 'Alex', 'Pat', 'Founder', 'Practitioner'].map(n => ps.find(p => p.name.startsWith(n))).filter(Boolean);
+  const who = u ? `${esc(u.name.split(' ')[0])} · ${u.role === 'member' ? 'member' : u.role}` : 'Visitor';
+  /* A discreet floating control: switch who you're viewing as, move the demo clock, open the mailbox, reset. */
+  return `<details class="demotools demo-pill"${demoOpen ? ' open' : ''}><summary aria-label="Demo controls"><span class="dp-dot" aria-hidden="true"></span><span class="dp-lbl">Live demo</span><span class="dp-who">${who}</span></summary>
+    <div class="panel"><div class="dp-head"><b>Explore the demo</b><span class="xs muted">${fmtDate(now())}${S.clockDays ? ` · +${S.clockDays} days` : ''}</span></div>
+      <div class="dp-sec"><span class="dp-t">View as</span><div class="dp-people"><button class="dp-person ${u ? '' : 'on'}" data-act="logout">Visitor</button>${quick.map(p => `<button class="dp-person ${u && u.id === p.id ? 'on' : ''}" data-act="login" data-id="${p.id}">${esc(p.name.split(' ')[0])}<i>${p.role === 'member' ? 'member' : p.role}</i></button>`).join('')}</div><a class="xs" href="#/login">All demo people →</a></div>
+      <div class="dp-sec"><span class="dp-t">Time travel</span><div class="dp-row"><button data-act="clock" data-days="30">+30 days</button><button data-act="clock" data-days="90">+90 days</button>${S.clockDays ? '<button data-act="clock" data-days="0">Back to today</button>' : ''}</div></div>
+      <div class="dp-sec dp-row">${STATIC ? '<a href="#/dev/mailbox">✉ Demo mailbox</a>' : '<a href="/dev/mailbox" target="_blank" rel="noopener">✉ Demo mailbox</a>'}<button data-act="reset">↺ Reset demo</button></div>
+      <p class="xs muted">Payments: ${S.payments === 'stripe' ? 'Stripe' : 'test mode'} · email: ${S.mail === 'smtp' ? 'SMTP' : 'logged'}</p></div></details>`;
 }
 function subnav(items, counts = {}) {
   const path = location.hash.slice(1);
@@ -198,41 +199,8 @@ const back = (to, l) => `<a href="#${to}" class="sm muted" style="text-decoratio
 const lockNote = () => `<span class="xs muted">🔒 Members</span>`;
 
 /* ───────────────────────── public pages ───────────────────────── */
-const CARDS = [
-  { title: 'Analysis', body: 'A qualifying mineral test, clear sample steps, and your results in one place.', image: 'brand/nourish.jpg', alt: 'A plate of vegetables and protein', to: '/analysis' },
-  { title: 'Intelligence', body: 'A plain-language chart that shows where each mineral sits in its laboratory range.', image: 'brand/ground.jpg', alt: 'Feet standing on morning grass', to: '/intelligence' },
-  { title: 'Method', body: 'Six pillars for food, space, nature, movement, release and rest.', image: 'brand/move.jpg', alt: 'A person walking a tree-lined path', to: '/pillars' },
-];
 const R = {};
-R['/'] = () => `<main id="main">
-  <section class="hero hero-earth"><div class="stars" aria-hidden="true"></div><div class="rays" aria-hidden="true"></div><div class="sun" aria-hidden="true"></div><div class="embers" aria-hidden="true">${Array.from({ length: 10 }, (_, i) => `<span style="--x:${i}"></span>`).join('')}</div><img class="earth" src="brand/earth.jpg" srcset="brand/earth-800.jpg 800w, brand/earth.jpg 1010w" sizes="100vw" alt="" fetchpriority="high" decoding="async"><div class="shade"></div><div class="container">
-    <div class="rise logo-wrap">${logo('')}</div>
-    <div class="rise d1 kicker">Awakening Human Potential</div>
-    <h1>${['From', 'Analysis', 'to'].map((w, i) => `<span class="w" style="--i:${i}">${w}</span>`).join(' ')} <span class="w metal" style="--i:3">Awakening</span></h1>
-    <p class="rise d3 lead">One purchase. Your mineral test, a chart you can read, and six months inside a calmer way of living.</p>
-    <div class="rise d4 cta"><a href="#/join" class="btn lg">Join the DELTA Experience</a><a href="#/how-it-works" class="plain">How it works</a></div>
-  </div></section>
-  <section class="band"><div class="container grid md3">${CARDS.map((c, i) => `<a href="#${c.to}" class="card flush rise d${i + 1}"><div class="photo" style="height:12rem;border-radius:0"><img src="${c.image}" alt="${esc(c.alt)}" loading="lazy"></div><div class="body"><h3 class="gold" style="font-size:1.25rem;font-weight:300">${c.title}</h3><p class="muted mt2">${c.body}</p></div></a>`).join('')}</div></section>
-  <section class="container grid md2" style="align-items:center;padding-bottom:4rem">
-    <div class="photo rise" style="height:20rem"><img src="brand/rest.jpg" alt="A quiet bedroom prepared for rest" loading="lazy"></div>
-    <div class="rise d2"><h2 style="font-size:1.9rem;font-weight:300">A gentler daily rhythm</h2><p class="lg muted mt4">Food, a clearer room, time outside, a walk, a laugh, and a real evening. The pillars are practices, not a medical plan.</p><a href="#/pillars" class="mt6" style="display:inline-block;font-weight:600;text-decoration:none">See the six pillars</a></div>
-  </section>
-  <section class="band"><div class="container grid md2" style="align-items:start">
-    <div><div class="kicker">One DELTA Experience</div><h2 class="mt3" style="font-size:1.9rem;font-weight:300">Everything is included</h2>
-      <p class="muted mt4">There is one package — not a test plus a subscription plus add-ons. A qualifying mineral test gives you six months of full access. Order a repeat test before then and six more months are added on to your current end date, so early renewals never lose time.</p>
-      <a href="#/join" class="btn mt6">Join for ${money(S.settings.price)}</a> <span class="xs muted">Placeholder price — set by the founder in admin.</span></div>
-    <div class="card hl"><ul class="sm" style="margin:0;padding-left:1.1rem;line-height:2">
-      <li>Hair mineral test kit and laboratory analysis</li><li>Your Mineral Intelligence chart and plain-English summary</li><li>A safety-screened proposed programme</li><li>Six months of the six pillars, Awakening, the DELTA Podcast and Meet Mineral Man</li><li>LAUGHOLOGY, community groups and the Partner Collective</li><li class="muted">Optional: a personal practitioner voice note (${money(S.settings.voicePrice)})</li></ul></div>
-  </div></section>
-  <section class="band"><div class="container grid md2" style="align-items:center">
-    <div><div class="kicker">The Community Centre</div><h2 class="mt3" style="font-size:1.9rem">Meditation, yoga, tai chi, mindfulness — and plenty of laughter</h2>
-      <p class="muted mt4">Drop into the practice rooms, breathe along with the guide, sit with the meditation timer, join a weekly session or add to the gratitude wall.</p><a class="btn mt6" href="#/centre">Visit the Community Centre</a></div>
-    <a class="mini-orbit" href="#/centre" aria-label="Visit the Community Centre">${PRACTICES.map((p, i) => `<span class="mo" style="--a:${i * 60}deg">${EMBLEM[p.emblem]}</span>`).join('')}<span class="mo-fol" aria-hidden="true">${LIFE.flower('bg')}</span><span class="mo-core"></span></a></div></section>
-  ${S.videos.some(v => v.youtubeId && v.status !== 'review') ? `<section class="band"><div class="container"><div class="flex between"><h2 style="font-size:1.6rem;font-weight:300">New on Meet Mineral Man</h2><a href="#/mineral-man">The full video library</a></div>
-    <div class="grid md3 mt6">${S.videos.filter(v => v.youtubeId && v.status !== 'review' && !v.archived).slice(0, 3).map(videoCard).join('')}</div></div></section>` : ''}
-  <section class="band"><div class="container"><div class="flex between"><h2 style="font-size:1.6rem;font-weight:300">Latest from the DELTA Podcast</h2><a href="#/podcast">All episodes</a></div>
-    <div class="grid md3 mt6">${S.episodes.filter(e => !e.archived).slice(0, 3).map(episodeCard).join('')}</div></div></section>
-</main>`;
+/* R['/'] (the homepage) lives in home.js */
 
 R['/how-it-works'] = () => page(`${back('/', 'Home')}
   <img src="brand/move.jpg" alt="A morning walk" class="rise mt6" style="height:14rem;width:100%;object-fit:cover;border-radius:1rem">
@@ -658,7 +626,7 @@ R['/admin'] = () => {
   return adminNav() + page(`<h1>Admin Dashboard</h1><p class="muted mt2">Manage analyses, run workflows, and review activity.</p>
   ${S.demo ? `<details class="card hl mt6" open><summary><b>Admin tour</b> <span class="sm muted">— everything here is example data; click around freely</span></summary>
     <div class="grid md3 mt4">${tour.map(([to, t, d]) => `<a class="inner" href="#${to}" style="text-decoration:none;color:inherit;display:block"><b class="gold sm">${t} →</b><p class="xs muted mt1">${d}</p></a>`).join('')}</div>
-    <p class="xs muted mt4">Tips: use <b>Demo tools → +30 days</b> to trigger renewal reminders and expiries · <b>Switch user</b> to sign in as any client · the <b>✦ assistant</b> (bottom right) answers “what’s waiting?” · <b>Reset demo</b> restores all examples.</p></details>` : ''}
+    <p class="xs muted mt4">Tips: use <b>Live demo → +30 days</b> to trigger renewal reminders and expiries · <b>Live demo → View as</b> to sign in as any client · the <b>✦ assistant</b> (bottom right) answers “what’s waiting?” · <b>Reset demo</b> restores all examples.</p></details>` : ''}
   <div class="grid md4 mt8">${[['Members', m.length], ['Active', m.filter(u => hasAccess(u)).length], ['Lab reports', tests.filter(x => x.t.receivedAt).length], ['HTMA analyses', tests.filter(x => x.t.generatedAt).length],
     ['Revenue (demo)', money(purchases.reduce((a, p) => a + p.amount, 0))], ['Renewals due', m.filter(u => memberStatus(u) === 'renewal_due').length], ['Expired', m.filter(u => memberStatus(u) === 'expired').length], ['Avg turnaround', turn.length ? (turn.reduce((a, b) => a + b, 0) / turn.length).toFixed(1) + ' d' : '—'],
     ['Automation success', auto.length ? Math.round(autoOk.length / auto.length * 100) + '%' : '—'], ['Voice-note requests', S.voiceNotes.filter(v => v.status === 'requested').length], ['Partner clicks', S.partners.reduce((a, p) => a + (p.clicks || 0), 0)], ['Lessons completed', m.reduce((a, u) => a + u.lessonsDone.length, 0)]]
@@ -843,9 +811,10 @@ function render() {
   if (path.startsWith('/admin')) html = adminGuard(path) ?? (R[path] ? R[path](q) : notFound());
   else if (parts[0] === 'pillars' && parts[1]) html = pillarPage(parts[1]);
   else if (parts[0] === 'community') html = R['/community'](q, parts);
-  else if (parts[0] === 'centre' && parts[1]) html = centreRoom(parts[1]);
+  else if (parts[0] === 'centre' && parts[1]) html = R['/centre/' + parts[1]] ? R['/centre/' + parts[1]](q, parts) : centreRoom(parts[1]);
   else if (parts[0] === 'pay') html = payPage(parts[1]);
   else html = R[path] ? R[path](q, parts) : notFound();
+  document.body.dataset.route = parts[0] || 'home';
   document.getElementById('app').innerHTML = responsiveImages(`<a class="skip" href="#main" data-act="skip">Skip to content</a>${demobar()}${header()}${html}${footer()}${aiWidget(path)}`);
   document.title = 'DELTA — Awakening Human Potential';
   for (const id of ['chatlog', 'ailog']) { const log = document.getElementById(id); if (log) log.scrollTop = log.scrollHeight; }

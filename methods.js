@@ -18,7 +18,7 @@ function methodCard(m) {
 
 function methodsPage() {
   const u = me();
-  return `${u && !isStaff(u) ? portalNav() : ''}<main id="main" tabindex="-1" class="centre">
+  return `${centreTabs()}<main id="main" tabindex="-1" class="centre">
   <section class="container centre-sec">${back('/centre', 'Community Centre')}
     <div class="methods-hero mt6"><div class="mh-art">${LIFE.flower()}</div><div><div class="kicker">Guided methods</div><h1 class="mt2">Breathe, stretch, <span class="metal">flow</span>, rest</h1>
       <p class="lg muted mt3">${METHODS.length} guided practices — Wim Hof–style breathing, yoga, tai chi and qigong, body scans, yoga nidra, grounding and laughter. Press start and the living guide shows you every breath and every move.</p>

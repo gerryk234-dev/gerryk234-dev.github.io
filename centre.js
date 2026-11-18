@@ -33,28 +33,36 @@ function socialButtons_(big = false) {
 }
 
 /* ── the hub ── */
-R['/centre'] = (q = {}) => {
-  const u = me(), member = u && hasAccess(u), c = S.centre;
+function centreOrbit(coreHref = '#/centre', coreLabel = 'Community<br>Centre') {
   const orbit = (items, cls, r) => `<div class="ring ${cls}" style="--r:${r}">${items.map((it, i) => `<div class="node" style="--a:${(360 / items.length) * i}deg"><a href="${it.href}" class="bubble" aria-label="${esc(it.label)}"><span class="bub-ico">${it.ico}</span><span class="bub-txt">${esc(it.short)}</span></a></div>`).join('')}</div>`;
   const pills = PILLARS.map(p => ({ href: `#/pillars/${p.id}`, label: `Pillar ${p.n}: ${p.name}`, short: p.name[0] + p.name.slice(1).toLowerCase(), ico: `<b>${p.icon}</b>` }));
   const pracs = PRACTICES.map(p => ({ href: `#/centre/${p.id}`, label: p.name, short: p.name.replace(' & Qi Gong', ''), ico: EMBLEM[p.emblem] }));
+  return `<div class="orbit" aria-label="Rooms of the Community Centre">
+      <div class="orbit-glow" aria-hidden="true"></div><div class="orbit-fol" aria-hidden="true">${LIFE.flower('bg')}</div>
+      <svg class="life orbit-lights" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="43" pathLength="1" class="ol out"/><circle cx="50" cy="50" r="43" pathLength="1" class="ol out b"/><circle cx="50" cy="50" r="25" pathLength="1" class="ol in"/><circle cx="50" cy="50" r="25" pathLength="1" class="ol in b"/></svg>
+      ${orbit(pracs, 'ring-out', 'var(--r-outer)')}${orbit(pills, 'ring-in', 'var(--r-inner)')}
+      <a class="core" href="${coreHref}" aria-label="${coreLabel.replace('<br>', ' ')}"><img src="brand/logo.jpg" alt="" width="88" height="88"><span>${coreLabel}</span></a>
+    </div>`;
+}
+R['/centre'] = (q = {}) => {
+  const u = me(), member = u && hasAccess(u), c = S.centre;
   const week = c.sessions.slice(0, 7);
   const todayIdx = new Date(now()).getDay();
   const myMood = u?.mood || {}, last7 = Array.from({ length: 7 }, (_, i) => { const d = new Date(now() - (6 - i) * DAY).toISOString().slice(0, 10); return myMood[d]; });
   const MOODS = [['calm', '😌'], ['happy', '😊'], ['okay', '🙂'], ['tired', '😴'], ['low', '😔'], ['stressed', '😣']];
-  return `${u && !isStaff(u) ? portalNav() : ''}<main id="main" tabindex="-1" class="centre">
+  return `${centreTabs()}<main id="main" tabindex="-1" class="centre">
   <section class="centre-hero">
     <div class="centre-copy"><div class="kicker">The DELTA Community Centre</div><h1 class="mt3">A calmer place to <span class="metal">gather</span></h1>
       <p class="lg muted mt4">Meditation, yoga, tai chi, mindfulness, laughter and comedy — around the six DELTA pillars. Drop in, breathe, watch, read, and practise together.</p>
       <div class="flex mt6"><button class="btn" data-act="breathe">🌬 Breathe with me</button><a class="btn ghost" href="#/centre/methods">✦ Guided methods</a><button class="btn ghost" data-act="sit">🔔 Meditation timer</button></div>
       <p class="xs muted mt4">${motionMoving() ? 'Tap any circle to step inside. ' : 'Your device asks for less motion, so the centre is still. '}${motionButton('xs')}</p></div>
-    <div class="orbit" aria-label="Rooms of the Community Centre">
-      <div class="orbit-glow" aria-hidden="true"></div><div class="orbit-fol" aria-hidden="true">${LIFE.flower('bg')}</div>
-      <svg class="life orbit-lights" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="43" pathLength="1" class="ol out"/><circle cx="50" cy="50" r="43" pathLength="1" class="ol out b"/><circle cx="50" cy="50" r="25" pathLength="1" class="ol in"/><circle cx="50" cy="50" r="25" pathLength="1" class="ol in b"/></svg>
-      ${orbit(pracs, 'ring-out', 'var(--r-outer)')}${orbit(pills, 'ring-in', 'var(--r-inner)')}
-      <a class="core" href="#/centre" aria-label="Community Centre"><img src="brand/logo.jpg" alt="" width="88" height="88"><span>Community<br>Centre</span></a>
-    </div>
+    ${centreOrbit()}
   </section>
+
+  <section class="container centre-sec"><div class="grid md2" style="align-items:start">
+    <div class="card today-card"><div class="flex between"><h2 class="lined" style="font-size:1.25rem">☀ ${greeting()}</h2><a class="xs" href="#/centre/today">Open today →</a></div>${messageHTML(false)}${planHTML(true)}<a class="btn xs mt3" href="#/centre/today">See today’s plan, meals & suggestions</a></div>
+    <div class="card"><div class="flex between"><h2 class="lined" style="font-size:1.25rem">♥ Community feed</h2><a class="xs" href="#/centre/feed">Open the feed →</a></div><div class="stack mt4 feed-mini">${(c.feed || []).slice(0, 3).map(feedItem).join('') || '<p class="muted">Nothing yet.</p>'}</div></div>
+  </div></section>
 
   <section class="container centre-sec"><h2>The practice rooms</h2>
     <div class="grid md3 mt6">${PRACTICES.map(p => `<a class="card room" href="#/centre/${p.id}"><div class="room-em">${EMBLEM[p.emblem]}</div><div><div class="kicker" style="font-size:.66rem">${esc(p.tag)}</div><h3 class="mt1" style="font-size:1.2rem">${esc(p.name)}</h3><p class="sm muted mt2">${esc(p.desc)}</p>
@@ -98,7 +106,7 @@ function centreRoom(id) {
   const vids = c.videos.filter(v => v.practice === id), books = c.books.filter(b => b.practice === id), sess = c.sessions.filter(s => s.practice === id);
   const pillar = PILLARS.find(x => x.id === p.pillar);
   const gentle = ['yoga', 'taichi'].includes(id) ? '<p class="xs muted mt3">Move gently and within your own range; stop if anything hurts, and check with your GP if you have a health condition.</p>' : '';
-  return `${u && !isStaff(u) ? portalNav() : ''}` + page(`${back('/centre', 'Community Centre')}
+  return `${centreTabs()}` + page(`${back('/centre', 'Community Centre')}
   <div class="room-hero mt6"><div class="room-big">${EMBLEM[p.emblem]}</div><div><div class="kicker">${esc(p.tag)}</div><h1 class="mt2">${esc(p.name)}</h1><p class="lg muted mt3">${esc(p.desc)}</p>
     <div class="flex mt4"><button class="btn xs" data-act="breathe">🌬 Breathe</button><button class="btn ghost xs" data-act="sit">🔔 Timer</button>${pillar ? `<a class="btn ghost xs" href="#/pillars/${pillar.id}">${pillar.icon} ${pillar.name} pillar</a>` : ''}</div>${gentle}</div></div>
   ${(() => { const ms = METHODS.filter(m => m.practice === id || (id === 'laughter' && m.cat === 'joy') || (id === 'comedy' && m.id === 'laughdrill')); return ms.length ? `<h2 class="mt10 lined">Guided methods</h2><div class="grid md3 mt4">${ms.map(methodCard).join('')}</div><p class="sm mt3"><a href="#/centre/methods">All ${METHODS.length} guided methods →</a></p>` : ''; })()}

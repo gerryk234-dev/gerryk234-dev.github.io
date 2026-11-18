@@ -294,8 +294,96 @@ const METHODS = (() => {
 })();
 const METHOD_CATS = [['breath', 'Breathwork', '🌬'], ['yoga', 'Yoga', '🧘'], ['taichi', 'Tai chi & qigong', '☯'], ['mind', 'Mindfulness & deep rest', '🌙'], ['joy', 'Grounding & joy', '🌿']];
 
+
+/* Community portal — daily content. Picked by date, so everyone shares the same "today".
+   Food ideas are general wholefood suggestions, not personal nutrition advice. */
+const DAILY = {
+  messages: [
+    ['Small steps, taken daily, become a new way of living.', 'DELTA'],
+    ['You don’t have to feel ready. You just have to begin gently.', 'DELTA'],
+    ['Drink water, step outside, breathe slowly — the basics are powerful.', 'DELTA'],
+    ['Rest is not a reward for finishing. It is part of the work.', 'DELTA'],
+    ['Your body keeps listening to how you speak to it. Speak kindly.', 'DELTA'],
+    ['Progress, not perfection. One good choice is enough for now.', 'DELTA'],
+    ['Feet on the earth, face to the sun, a laugh with a friend — medicine for the spirit.', 'DELTA'],
+    ['Breathe in what you need. Breathe out what you don’t.', 'DELTA'],
+    ['The best time to plant a tree was twenty years ago. The second best time is now.', 'Proverb'],
+    ['Wherever you go, there you are.', 'Jon Kabat-Zinn'],
+    ['Almost everything will work again if you unplug it for a few minutes — including you.', 'Anne Lamott'],
+    ['Happiness is not something ready-made. It comes from your own actions.', 'The Dalai Lama'],
+    ['Look deep into nature, and then you will understand everything better.', 'Albert Einstein'],
+    ['A good laugh and a long sleep are the best cures in the doctor’s book.', 'Irish proverb'],
+    ['What you do every day matters more than what you do once in a while.', 'Gretchen Rubin'],
+    ['The present moment is filled with joy and happiness. If you are attentive, you will see it.', 'Thich Nhat Hanh'],
+    ['Be the energy you want to attract.', 'DELTA'],
+    ['Movement is a celebration of what your body can do today.', 'DELTA'],
+    ['You are not behind. You are on your own path, at your own pace.', 'DELTA'],
+    ['Gratitude turns what we have into enough.', 'Anonymous'],
+    ['Slow down — calm is a superpower.', 'DELTA'],
+    ['Every sunrise is an invitation to begin again.', 'DELTA'],
+    ['Take care of your body. It’s the only place you have to live.', 'Jim Rohn'],
+    ['Nature does not hurry, yet everything is accomplished.', 'Lao Tzu'],
+    ['Connection is why we’re here; it gives purpose and meaning to our lives.', 'Brené Brown'],
+    ['Like water, a calm mind lets everything become clear.', 'DELTA'],
+    ['Joy is the simplest form of gratitude.', 'Karl Barth'],
+    ['Your daily rhythm is your quiet superpower. Guard it kindly.', 'DELTA'],
+    ['Awaken a little more today: notice, breathe, smile.', 'DELTA'],
+    ['You are allowed to be both a masterpiece and a work in progress.', 'Sophia Bush'],
+  ],
+  meals: {
+    breakfast: ['Overnight oats with chia, berries and pumpkin seeds', 'Two eggs, wilted spinach and wholegrain toast', 'Greek yoghurt with walnuts, kiwi and a drizzle of honey', 'Buckwheat porridge with banana and almond butter', 'Avocado on rye with tomatoes and a squeeze of lemon', 'Green smoothie: spinach, banana, oats, flaxseed and milk of choice', 'Scrambled tofu with peppers, onions and turmeric'],
+    lunch: ['Quinoa bowl with roast vegetables, chickpeas and tahini', 'Lentil and vegetable soup with a slice of sourdough', 'Big salad: leaves, beetroot, feta, seeds and olive oil', 'Wholegrain wrap with hummus, chicken or falafel and crunchy veg', 'Sardines on toast with a tomato and cucumber salad', 'Brown rice, edamame, avocado and sesame — a simple poke bowl', 'Sweet potato topped with black beans, salsa and yoghurt'],
+    dinner: ['Baked salmon, steamed greens and new potatoes', 'Vegetable and bean chilli with brown rice', 'Chicken and vegetable stir-fry with ginger and garlic', 'Chickpea and spinach curry with wholegrain flatbread', 'Lean mince and lentil bolognese with wholewheat pasta', 'Roast vegetable tray bake with feta and herbs', 'Miso-glazed tofu with bok choy and noodles'],
+    snack: ['A handful of almonds and an apple', 'Carrot and cucumber sticks with hummus', 'A square of dark chocolate and some berries', 'Oatcakes with nut butter', 'A banana and a glass of water', 'Plain popcorn with a pinch of sea salt', 'Natural yoghurt with seeds'],
+  },
+  moves: [
+    ['10 slow squats', 'Sit back as if into a chair; use one if you like.'],
+    ['Wall push-ups ×10', 'Hands on the wall, body straight, lower and press.'],
+    ['20 calf raises', 'Hold a counter, rise onto your toes, lower slowly.'],
+    ['A 10-minute brisk walk', 'Swing the arms; talk-but-not-sing pace.'],
+    ['Dance to one song', 'Any song you love. No one is watching.'],
+    ['Stairs ×3', 'Up and down at a steady pace; hold the rail.'],
+    ['Plank for 20 seconds', 'On the knees is perfect too.'],
+    ['Hip circles and shoulder rolls', 'Ten each way — oil the joints.'],
+    ['Balance on one leg', '30 seconds each side, near a wall.'],
+    ['Stretch break', 'Reach up tall, fold forward, open the chest.'],
+  ],
+  videos: [
+    { id: '8KkKuTCFvzI', title: 'What makes a good life? Lessons from the longest study on happiness', ch: 'Robert Waldinger · TED', mins: 13 },
+    { id: 'fLJsdqxnZb0', title: 'The happy secret to better work', ch: 'Shawn Achor · TED', mins: 12 },
+    { id: 'UNP03fDSj1U', title: 'Try something new for 30 days', ch: 'Matt Cutts · TED-Ed', mins: 3 },
+    { id: 'l-gQLqv9f4o', title: 'A pep talk from Kid President to you', ch: 'SoulPancake', mins: 3 },
+    { id: 'gXDMoiEkyuQ', title: 'Gratitude', ch: 'Louie Schwartzberg · TEDxSF', mins: 10 },
+    { id: 'yaQZFhrW0fU', title: 'Make your bed — commencement address', ch: 'Admiral William McRaven · UT Austin', mins: 19 },
+    { id: '4q1dgn_C0AU', title: 'The surprising science of happiness', ch: 'Dan Gilbert · TED', mins: 21 },
+    { id: 'UF8uR6Z6KLc', title: '2005 Stanford commencement address', ch: 'Steve Jobs · Stanford', mins: 15 },
+    { id: 'Lp7E973zozc', title: 'How to stop screwing yourself over', ch: 'Mel Robbins · TEDxSF', mins: 22 },
+  ],
+  music: [
+    ['Weightless', 'Marconi Union', 'Ambient calm'], ['Gymnopédie No. 1', 'Erik Satie', 'Piano'], ['Spiegel im Spiegel', 'Arvo Pärt', 'Stillness'],
+    ['Clair de Lune', 'Claude Debussy', 'Piano'], ['Nuvole Bianche', 'Ludovico Einaudi', 'Piano'], ['Music for Airports', 'Brian Eno', 'Ambient'],
+    ['Cello Suite No. 1', 'J. S. Bach · Yo-Yo Ma', 'Classical'], ['Here Comes the Sun', 'The Beatles', 'Feel-good'], ['Lovely Day', 'Bill Withers', 'Feel-good'],
+    ['Three Little Birds', 'Bob Marley', 'Feel-good'], ['Hoppípolla', 'Sigur Rós', 'Uplifting'], ['Says', 'Nils Frahm', 'Focus'],
+    ['What a Wonderful World', 'Louis Armstrong', 'Gratitude'], ['Riverside', 'Agnes Obel', 'Gentle'],
+  ],
+  films: [
+    ['Soul', 2020, 'Animated, warm and wise — about the spark that makes life worth living.'],
+    ['Peaceful Warrior', 2006, 'A gymnast learns presence from an unlikely teacher.'],
+    ['The Secret Life of Walter Mitty', 2013, 'Stepping out of daydreams and into life.'],
+    ['My Octopus Teacher', 2020, 'Documentary: a year of friendship in a kelp forest.'],
+    ['Kiss the Ground', 2020, 'Documentary: soil, food and hope for the planet.'],
+    ['Fantastic Fungi', 2019, 'Documentary: the hidden network beneath our feet.'],
+    ['The Biggest Little Farm', 2018, 'Documentary: building a farm in harmony with nature.'],
+    ['Inside Out', 2015, 'Every feeling has its place — especially sadness.'],
+    ['The Pursuit of Happyness', 2006, 'Perseverance, fatherhood and hope.'],
+    ['Paddington 2', 2017, 'Pure kindness, and very funny.'],
+    ['Amélie', 2001, 'Small, joyful acts that change lives.'],
+    ['Won’t You Be My Neighbor?', 2018, 'Documentary: Fred Rogers and the power of kindness.'],
+  ],
+};
+
 /* Shared by the browser (global) and the server (require). */
 (function (exportsObj) {
   if (typeof module !== 'undefined' && module.exports) module.exports = exportsObj;
   else self.DeltaData = exportsObj;
-})({ PILLARS, EPISODES, VIDEOS, PARTNERS, FAQS, JOKES, MINERALS, DEMO_RESULT, TOXIC, RATIOS, RULESETS, CURRENT_RULESET, SAFETY_QS, PRACTICES, CENTRE_VIDEOS, BOOKS, SESSIONS, METHODS, METHOD_CATS });
+})({ PILLARS, EPISODES, VIDEOS, PARTNERS, FAQS, JOKES, MINERALS, DEMO_RESULT, TOXIC, RATIOS, RULESETS, CURRENT_RULESET, SAFETY_QS, PRACTICES, CENTRE_VIDEOS, BOOKS, SESSIONS, METHODS, METHOD_CATS, DAILY });
