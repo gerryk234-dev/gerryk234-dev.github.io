@@ -1,5 +1,5 @@
 /* DELTA · Love & Life — living, animated symbols drawn in SVG (no images):
-   the Flower of Life (blooming out of the Seed of Life), the Tree of Life (growing, with heart-shaped leaves)
+   the Lotus of Life (twelve circles through one centre), the Tree of Life (growing, with heart-shaped leaves)
    and the Ankh, the ancient symbol of life. Also: the love burst shown whenever someone sends a ♥,
    and the loving-kindness practice. All motion is CSS and respects "reduce motion". */
 'use strict';
@@ -10,16 +10,16 @@ const HEART = (x, y, s) => `M${r2(x)} ${r2(y + s * 0.9)}C${r2(x - s * 1.6)} ${r2
 /* Living light: a copy of every drawn line carries a small spark that keeps travelling round it, like a buffering ring. */
 const glints = m => `<g class="glints">${m.replace(/<(circle|path)\b([^>]*?)\/>/g, (x, t, a) => (/pathLength/.test(a) ? `<${t}${a.replace(/\s?class="[^"]*"/, '').replace(/stroke-width:[^;"]*;?/, '')} class="glint"/>` : ''))}</g>`;
 const LIFE = {
-  /* Flower of Life: 19 interlocking circles. The first 7 are the Seed of Life, drawn first, then the flower blooms. */
+  /* The Lotus of Life: twelve circles that all pass through one centre — unified, non-dual (drawn with a double line). */
   flower(cls = '') {
-    const id = 'fol' + (++lifeUid), R = 26, c = 100, pts = [[0, 0]];
-    for (let i = 0; i < 6; i++) pts.push([R * Math.cos(i * Math.PI / 3), R * Math.sin(i * Math.PI / 3)]);
-    for (let i = 0; i < 6; i++) { pts.push([R * Math.sqrt(3) * Math.cos(Math.PI / 6 + i * Math.PI / 3), R * Math.sqrt(3) * Math.sin(Math.PI / 6 + i * Math.PI / 3)]); pts.push([2 * R * Math.cos(i * Math.PI / 3), 2 * R * Math.sin(i * Math.PI / 3)]); }
-    return `<svg viewBox="0 0 200 200" class="life life-flower ${cls}" aria-hidden="true"><defs><radialGradient id="${id}g"><stop offset="0" stop-color="#fff3c4" stop-opacity=".9"/><stop offset=".45" stop-color="#f5bf45" stop-opacity=".35"/><stop offset="1" stop-color="#f5bf45" stop-opacity="0"/></radialGradient>
-      <linearGradient id="${id}s" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".5" stop-color="#f5bf45"/><stop offset="1" stop-color="#ff9fb4"/></linearGradient></defs>
+    const id = 'fol' + (++lifeUid), N = 12, R = 40, c = 100;
+    const ctr = Array.from({ length: N }, (_, i) => [c + R * Math.cos(i * 2 * Math.PI / N - Math.PI / 2), c + R * Math.sin(i * 2 * Math.PI / N - Math.PI / 2)]);
+    const main = ctr.map(([x, y], i) => `<circle cx="${r2(x)}" cy="${r2(y)}" r="${R}" pathLength="1" style="--d:${i * 0.8}"/>`).join('');
+    const inner = ctr.map(([x, y], i) => `<circle class="inner" cx="${r2(x)}" cy="${r2(y)}" r="${R - 2.6}" pathLength="1" style="--d:${i * 0.8 + 0.4}"/>`).join('');
+    return `<svg viewBox="0 0 200 200" class="life life-flower life-lotus ${cls}" aria-hidden="true"><defs><radialGradient id="${id}g"><stop offset="0" stop-color="#fff3c4" stop-opacity=".9"/><stop offset=".45" stop-color="#f5bf45" stop-opacity=".35"/><stop offset="1" stop-color="#f5bf45" stop-opacity="0"/></radialGradient>
+      <linearGradient id="${id}s" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0b8"/><stop offset=".5" stop-color="#e3b04b"/><stop offset="1" stop-color="#f5d27a"/></linearGradient></defs>
       <circle class="heartbeat" cx="${c}" cy="${c}" r="60" fill="url(#${id}g)"/>
-      <g class="petals" stroke="url(#${id}s)">${(m => m + glints(m))(pts.map(([x, y], i) => `<circle cx="${r2(c + x)}" cy="${r2(c + y)}" r="${R}" pathLength="1" style="--d:${i < 7 ? i : 7 + (i - 7) * 0.5}"/>`).join('') + `
-      <circle cx="${c}" cy="${c}" r="${3 * R}" pathLength="1" class="rim" style="--d:13"/><circle cx="${c}" cy="${c}" r="${3 * R + 5}" pathLength="1" class="rim thin" style="--d:13.5"/>`)}</g>
+      <g class="petals" stroke="url(#${id}s)">${main}${inner}${glints(main)}</g>
       <path class="core-heart" d="${HEART(c, c, 7)}"/></svg>`;
   },
 
@@ -60,7 +60,7 @@ const LIFE = {
   },
 };
 
-/* ── love burst: a little Flower of Life blooms and hearts float out from where love was sent ── */
+/* ── love burst: a little Lotus of Life blooms and hearts float out from where love was sent ── */
 function loveBurst(x, y) {
   const el = document.createElement('div'); el.className = 'love-burst'; el.setAttribute('aria-hidden', 'true');
   el.style.left = x + 'px'; el.style.top = y + 'px';
@@ -76,7 +76,7 @@ document.addEventListener('click', ev => {
   const r = b.getBoundingClientRect(); loveBurst(r.left + r.width / 2, r.top + r.height / 2);
 }, true);
 
-/* ── loving-kindness: the Tree of Life grows inside a turning Flower of Life while kind phrases are offered ── */
+/* ── loving-kindness: the Tree of Life grows inside a Lotus of Life while kind phrases are offered ── */
 const KINDNESS = {
   self: ['May I be well', 'May I be happy', 'May I be safe', 'May I be at peace'],
   loved: ['May you be well', 'May you be happy', 'May you be safe', 'May you be at peace'],
@@ -104,14 +104,14 @@ function lifeSection() {
   return `<section class="container centre-sec life-sec" id="love"><div class="kicker">Love &amp; Life</div><h2 class="mt2">Living symbols of connection</h2>
     <p class="sm muted mt2" style="max-width:44rem">Three ancient designs, found across many cultures, drawn here in moving light. They are reminders — of how everything is connected, how we grow, and how precious life is. No belief required.</p>
     <div class="grid md3 mt6">
-      ${card(LIFE.flower(), 'Connection', 'The Flower of Life', 'It begins as the Seed of Life — seven circles — and blooms into nineteen. Every circle touches its neighbours: a picture of how each of us is part of something whole.')}
+      ${card(LIFE.flower(), 'Unity', 'The Lotus of Life', 'Twelve circles that all pass through one centre — a picture of unified, eternal consciousness. However many paths we walk, they meet in the same heart.')}
       ${card(LIFE.tree(), 'Growth', 'The Tree of Life', 'Roots below, branches above. A reminder to ground yourself, reach for the light and keep growing — one small leaf of love at a time.')}
       ${card(LIFE.ankh(), 'Vitality', 'The Symbol of Life', 'The Ankh, the ancient Egyptian sign for life and breath. Here it holds a beating heart: life is lived best with love at its centre.')}
     </div>
     <div class="flex mt6" style="justify-content:center"><button class="btn" data-act="kindness">♥ Loving-kindness practice</button><button class="btn ghost" data-act="kindness" data-who="all">Send love to everyone</button></div></section>`;
 }
 
-/* Every page lives in the same light: a slowly turning Flower of Life and a Tree of Life behind the content. */
+/* Every page lives in the same light: a Lotus of Life and a Tree of Life behind the content. */
 { const bg = document.createElement('div'); bg.className = 'life-bg'; bg.setAttribute('aria-hidden', 'true'); bg.innerHTML = `<div class="lb-fol">${LIFE.flower('bg')}</div><div class="lb-tree">${LIFE.tree()}</div><div class="lb-ankh">${LIFE.ankh()}</div>`; document.body.prepend(bg); }
 
 /* Symbols start drawing when they scroll into view (so the bloom is seen, not missed). */

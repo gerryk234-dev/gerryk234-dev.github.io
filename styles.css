@@ -1083,3 +1083,18 @@ body[data-route="home"] .life-bg .lb-fol { display: block; top: 5rem; opacity: .
 @media (max-width: 380px) { .method-steps { grid-template-columns: repeat(2, auto); } }
 @media (prefers-reduced-motion: reduce) { html:not(.motion-on) .method-steps li { animation: none; opacity: 1; transform: none; } }
 .landing-copy > .landing-cta { max-width: 40rem; } @media (max-width: 860px) { .landing-art { height: 46vh; } .landing-copy { margin-top: -2.5rem; } .landing-title { font-size: clamp(2.4rem, 11vw, 3.4rem); } .method-steps { margin-top: 1.2rem; } .ms-n { width: 1.5rem; height: 1.5rem; } }
+
+/* ═════════════ LANDING v3: image blended — dim edges, bright centre, rich colour; Lotus of Life behind ═════════════ */
+.landing-img { z-index: 0; filter: saturate(1.35) contrast(1.15) brightness(.9); }
+.landing-art::before { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; mix-blend-mode: soft-light;
+  background: radial-gradient(ellipse 45% 55% at 50% 38%, rgba(255,226,150,.55), rgba(255,200,90,.1) 45%, rgba(20,32,90,.55) 80%); }
+.landing-fol { z-index: 2; opacity: .5; }
+.landing-art::after { z-index: 3; background:
+  radial-gradient(ellipse 52% 62% at 50% 42%, transparent 0, transparent 30%, rgba(5,8,19,.45) 62%, rgba(5,8,19,.88) 88%, #05081a 100%),
+  linear-gradient(to bottom, rgba(5,8,19,.6), transparent 16%); }
+.landing-copy { z-index: 4; }
+.life-lotus .petals circle { stroke-width: 1.15; } .life-lotus .petals circle.inner { stroke-width: .5; opacity: .75; }
+/* the Lotus of Life in the background of the homepage, as before (static) */
+body[data-route="home"] .life-bg .lb-fol { display: block; top: 4rem; left: -12rem; right: auto; width: min(44rem, 80vw); opacity: .22; }
+@media (max-width: 860px) { body[data-route="home"] .life-bg .lb-fol { top: auto; bottom: -8rem; left: -20vw; width: 110vw; opacity: .16; }
+  .landing-art::after { background: radial-gradient(ellipse 70% 60% at 50% 40%, transparent 0, transparent 35%, rgba(5,8,19,.5) 70%, rgba(5,8,19,.9) 95%), linear-gradient(to bottom, rgba(5,8,19,.55), transparent 15%, transparent 70%, #05081a 100%); } }

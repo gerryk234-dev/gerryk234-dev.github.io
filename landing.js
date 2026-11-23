@@ -1,6 +1,6 @@
 /* DELTA · the landing page — the title, the six steps of the DELTA Method (titles only) and the call to action,
    over the meditation image (white light from above lighting the seven chakras), blended into the page with
-   soft fades and a static Flower of Life behind. */
+   soft fades and a static Lotus of Life behind. */
 'use strict';
 R['/'] = () => `<main id="main" class="landing">
   <section class="landing-hero">

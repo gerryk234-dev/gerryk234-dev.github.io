@@ -1,6 +1,6 @@
 /* DELTA · Guided methods — breathwork (incl. Wim Hof–style rounds), yoga sequences, tai chi & qigong,
    mindfulness and deep rest, grounding and laughter. Each plays in a living guide: a breathing orb inside a
-   turning Flower of Life, a light running round the step ring, soft bells, and the next step shown ahead. */
+   Lotus of Life, a light running round the step ring, soft bells, and the next step shown ahead. */
 'use strict';
 const methodById = id => METHODS.find(m => m.id === id);
 const methodMins = m => (m.steps ? Math.max(1, Math.round(m.steps.reduce((a, s) => a + s[1], 0) / 60)) : m.mins);

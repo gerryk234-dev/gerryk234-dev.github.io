@@ -1,4 +1,4 @@
-/* DELTA · the homepage — alive: the Earth and sun from the brief's cover with a living Flower of Life
+/* DELTA · the homepage — alive: the Earth and sun from the brief's cover with a living Lotus of Life
    around the sun, rotating practice words, counting stats, today's message and plan, the living orbit of
    pillars and practices, a journey path with travelling light, the Love & Life symbols and a growing Tree of Life. */
 'use strict';
