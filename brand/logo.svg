@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="DELTA">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd56a"/><stop offset=".55" stop-color="#f0b03c"/><stop offset="1" stop-color="#d9901f"/></linearGradient>
+    <radialGradient id="bg" cx=".5" cy=".55" r=".6"><stop offset="0" stop-color="#120e08"/><stop offset="1" stop-color="#040405"/></radialGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <circle cx="50" cy="50" r="50" fill="url(#bg)"/>
+  <g filter="url(#glow)">
+    <path d="M50 16L84.5 76H15.5Z" fill="none" stroke="url(#g)" stroke-width="4.2" stroke-linejoin="round"/>
+    <path d="M50 51.6C44.2 47.2 42.6 39.6 44.2 35.6C45.6 32 54.4 32 55.8 35.6C57.4 39.6 55.8 47.2 50 51.6Z" fill="none" stroke="url(#g)" stroke-width="3.1" stroke-linejoin="round"/>
+    <path d="M36.2 48.6Q37.4 50.6 50 51.4Q62.6 50.6 63.8 48.6L63.8 57.6Q62.6 55.6 53 55.4L54.2 71.6H45.8L47 55.4Q37.4 55.6 36.2 57.6Z" fill="url(#g)"/>
+  </g>
+</svg>

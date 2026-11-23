@@ -41,7 +41,7 @@ function centreOrbit(coreHref = '#/centre', coreLabel = 'Community<br>Centre') {
       <div class="orbit-glow" aria-hidden="true"></div><div class="orbit-fol" aria-hidden="true">${LIFE.flower('bg')}</div>
       <svg class="life orbit-lights" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="43" pathLength="1" class="ol out"/><circle cx="50" cy="50" r="43" pathLength="1" class="ol out b"/><circle cx="50" cy="50" r="25" pathLength="1" class="ol in"/><circle cx="50" cy="50" r="25" pathLength="1" class="ol in b"/></svg>
       ${orbit(pracs, 'ring-out', 'var(--r-outer)')}${orbit(pills, 'ring-in', 'var(--r-inner)')}
-      <a class="core" href="${coreHref}" aria-label="${coreLabel.replace('<br>', ' ')}"><img src="brand/logo.jpg" alt="" width="88" height="88"><span>${coreLabel}</span></a>
+      <a class="core" href="${coreHref}" aria-label="${coreLabel.replace('<br>', ' ')}"><img src="brand/logo.svg" alt="" width="88" height="88"><span>${coreLabel}</span></a>
     </div>`;
 }
 R['/centre'] = (q = {}) => {

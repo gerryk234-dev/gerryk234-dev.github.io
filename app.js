@@ -142,7 +142,7 @@ function progressChart(snaps) {
 const snapsOf = u => publishedTests(u).map((t, i) => ({ label: `Test ${i + 1}`, minerals: t.minerals }));
 
 /* ───────────────────────── layout ───────────────────────── */
-const logo = (cls = '') => `<img src="brand/logo.jpg" alt="DELTA logo" width="88" height="88" class="logo ${cls}">`;
+const logo = (cls = '') => `<img src="brand/logo.svg" alt="DELTA logo" width="88" height="88" class="logo ${cls}">`;
 const isStaff = u => u && u.role !== 'member';
 function header() {
   const u = me(); const path = location.hash.slice(1) || '/';
