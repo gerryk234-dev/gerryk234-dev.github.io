@@ -3,7 +3,7 @@
    Six chapters, in order, from first visit to joining. */
 'use strict';
 const CHAPTERS = [
-  { n: 1, id: 'home', name: 'Home', tag: 'Start here', icon: '⌂', desc: 'What DELTA is, today in the community, and where to go next.', pages: [['/', 'Home']] },
+  { n: 1, id: 'home', name: 'Home', tag: 'Start here', icon: '⌂', desc: 'What DELTA is, today in the community, and where to go next.', pages: [['/', 'Home'], ['/explore', 'Explore DELTA']] },
   { n: 2, id: 'understand', name: 'Understand', tag: 'How DELTA works', icon: '◎', desc: 'One purchase: your mineral test, a chart you can read, and six months of access.',
     pages: [['/how-it-works', 'How it works'], ['/analysis', 'Analysis — your test'], ['/intelligence', 'Intelligence — your report']] },
   { n: 3, id: 'method', name: 'The Method', tag: 'Six pillars & Awakening', icon: '△', desc: 'BODY, ENVIRONMENT, GROUND, MOVE, RELEASE and REST — and Awakening through them all.',

@@ -1109,7 +1109,7 @@ document.addEventListener('submit', async ev => {
 });
 document.addEventListener('error', ev => { if (ev.target.matches?.('.vthumb img')) ev.target.style.visibility = 'hidden'; }, true);
 let syTick = false;
-addEventListener('scroll', () => { if (syTick || reduceMotion) return; syTick = true; requestAnimationFrame(() => { document.documentElement.style.setProperty('--sy', Math.round(scrollY)); syTick = false; }); }, { passive: true });
+/* (the scroll parallax on the starfield was removed: the background is static for speed) */
 window.addEventListener('hashchange', () => { render(); window.scrollTo(0, 0); });
 /* start once every script on the page (e.g. centre.js) has run */
 const domReady = new Promise(r => (document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', r, { once: true }) : r()));

@@ -9,23 +9,13 @@ const HOME_CARDS = [
 ];
 const WORDS = ['Breathe', 'Ground', 'Move', 'Laugh', 'Rest', 'Awaken'];
 
-R['/'] = () => {
+R['/explore'] = () => {
   const vids = S.videos.filter(v => v.youtubeId && v.status !== 'review' && !v.archived);
   const stats = [[6, 'pillars'], [METHODS.length, 'guided methods'], [vids.length, 'Mineral Man videos'], [6, 'months included']];
   const journey = [['🧪', 'Test', 'Your hair mineral test, posted home.'], ['📊', 'Understand', 'A chart you can read, in plain English.'], ['🌿', 'Live', 'Six pillars, guided methods and a daily plan.'], ['✦', 'Awaken', 'A community growing together.']];
-  return `<main id="main" class="home">
-  <section class="hero hero-earth"><div class="stars" aria-hidden="true"></div><div class="rays" aria-hidden="true"></div><div class="sun" aria-hidden="true"></div>
-    <div class="hero-fol" aria-hidden="true">${LIFE.flower('hero')}</div>
-    <div class="embers" aria-hidden="true">${Array.from({ length: 14 }, (_, i) => `<span style="--x:${i}"></span>`).join('')}</div>
-    <img class="earth" src="brand/earth.jpg" srcset="brand/earth-800.jpg 800w, brand/earth.jpg 1010w" sizes="100vw" alt="" fetchpriority="high" decoding="async"><div class="shade"></div><div class="container">
-    <div class="rise logo-wrap"><span class="logo-live big">${logo('')}</span></div>
-    <div class="rise d1 kicker">Awakening Human Potential</div>
-    <h1>${['From', 'Analysis', 'to'].map((w, i) => `<span class="w" style="--i:${i}">${w}</span>`).join(' ')} <span class="w metal" style="--i:3">Awakening</span></h1>
-    <p class="rise d2 rotator" aria-label="${WORDS.join(', ')}">${WORDS.map((w, i) => `<span style="--i:${i}">${w}</span>`).join('')}</p>
-    <p class="rise d3 lead">One purchase. Your mineral test, a chart you can read, and six months inside a calmer way of living — with a community to walk beside you.</p>
-    <div class="rise d4 cta"><a href="#/join" class="btn lg">Join the DELTA Experience</a><a href="#/centre/today" class="btn ghost lg">☀ See today in the community</a></div>
-    <a class="scroll-cue" href="#/" data-act="scrollto" data-to="home-today" aria-label="Scroll down"><span></span></a>
-  </div></section>
+  return `<main id="main" class="home explore">
+  <section class="container explore-head"><div class="kicker">Explore DELTA</div><h1 class="mt2">Everything in <span class="metal">one place</span></h1>
+    <p class="lg muted mt3" style="max-width:44rem">The six steps of DELTA, today in the community, the pillars, Meet Mineral Man and the podcast.</p></section>
 
   <section class="stats-strip"><div class="container stats">${stats.map(([n, l], i) => `<div class="stat rise d${i + 1}"><b style="--n:${n}" aria-label="${n}"></b><span>${l}</span></div>`).join('')}</div></section>
 
