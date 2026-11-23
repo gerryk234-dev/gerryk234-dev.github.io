@@ -876,8 +876,18 @@ function animateTitles() {
   const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('h-in'); io.unobserve(e.target); } }), { threshold: .2 }) : null;
   hs.forEach(h => { h.classList.add('h-anim'); io ? io.observe(h) : h.classList.add('h-in'); });
 }
+/* Arriving from the public front end with a chosen sign-up route (#/register?via=google|apple|microsoft|email):
+   open that provider's sign-in straight away, or put the cursor in the email form. Runs once per arrival. */
+function startVia(path) {
+  const m = /[?&]via=(google|apple|microsoft|email)\b/.exec(location.hash);
+  if (path !== '/register' || !m || me()) return;
+  history.replaceState(null, '', location.pathname + location.search + location.hash.replace(/[?&]via=\w+/, ''));
+  if (m[1] === 'email') { const n = document.querySelector('form[data-form=register] input[name=name]'); n?.scrollIntoView({ block: 'center' }); n?.focus(); return; }
+  document.querySelector(`.btn.social.${m[1]}`)?.click();
+}
 function enhance(path) {
   animateTitles();
+  setTimeout(() => startVia(path), 50);
   const main = document.getElementById('main');
   document.querySelectorAll('main img[srcset], .vthumb img').forEach(img => { if (!img.complete) { img.classList.add('fade'); img.addEventListener('load', () => img.classList.add('loaded'), { once: true }); } });
   if (!reduceMotion && 'IntersectionObserver' in window) {
