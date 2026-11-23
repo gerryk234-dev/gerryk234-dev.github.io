@@ -160,7 +160,7 @@ function footer() {
   return `<footer class="site"><div class="cols">
     <div><a class="brand" href="#/"><span class="logo-live">${logo()}</span><div><div class="t1">DELTA</div><div class="t2">Awakening Human Potential</div></div></a><div class="foot-tree" aria-hidden="true">${LIFE.tree()}</div></div>
     ${footerMap()}
-  </div><div class="base">${socialButtons_()}<div class="mb2">${motionButton('xs')}</div>DELTA · Analysis · Intelligence · Method · Awakening Human Potential<br><a href="#/legal">Privacy, terms & disclaimers</a> · <a href="#/legal">Cookie choices</a> · <a href="#/about">Contact</a><br>DELTA is an educational wellbeing service. Hair Tissue Mineral Analysis is not a standalone diagnostic tool, and nothing here is medical advice, diagnosis or treatment.</div></footer>`;
+  </div><div class="base">${socialButtons_()}<div class="mb2">${motionButton('xs')}</div>DELTA · Analysis · Intelligence · Method · Awakening Human Potential${window.DELTA_BUILD ? `<br><span class="xs muted build-stamp">Version ${esc(window.DELTA_BUILD.v)} · ${esc(window.DELTA_BUILD.at)}</span>` : ''}<br><a href="#/legal">Privacy, terms & disclaimers</a> · <a href="#/legal">Cookie choices</a> · <a href="#/about">Contact</a><br>DELTA is an educational wellbeing service. Hair Tissue Mineral Analysis is not a standalone diagnostic tool, and nothing here is medical advice, diagnosis or treatment.</div></footer>`;
 }
 function demobar() {
   if (!S.demo) return '';
