@@ -42,9 +42,9 @@ header{min-height:82px;flex-wrap:nowrap}
 /* fixes */
 @media(max-width:1000px){.site-header nav a.join{padding:11px 20px;margin-top:8px}}
 .controls{animation:ctrlOut .6s 10s forwards}@keyframes ctrlOut{to{opacity:0;visibility:hidden}}body.skipped .controls{display:none}
-/* the beam pours straight down onto the figure's head (head top = hero bottom - person offset - 95px figure height) */
-.beam{height:calc(62% - 95px)}
-@media(max-width:850px){.beam{height:calc(50% - 95px)}}
+/* finished scene (intro skipped, return visit or reduced motion) must look the same as after the intro: beam centred, ring at its normal strength */
+body.skipped .beam{transform:translateX(-50%)}
+body.skipped .flower{opacity:.32}
 
 /* Flower of Life behind the titles of the inner pages (static) */
 .interiorHero::before{content:"";position:absolute;left:50%;top:58%;width:min(560px,92vw);aspect-ratio:1;transform:translate(-50%,-50%);background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-125 -125 250 250' fill='none' stroke='%23e9c47b' stroke-width='.7'%3E%3Ccircle cx='0.00' cy='0.00' r='39'/%3E%3Ccircle cx='39.00' cy='0.00' r='39'/%3E%3Ccircle cx='19.50' cy='33.77' r='39'/%3E%3Ccircle cx='-19.50' cy='33.77' r='39'/%3E%3Ccircle cx='-39.00' cy='0.00' r='39'/%3E%3Ccircle cx='-19.50' cy='-33.77' r='39'/%3E%3Ccircle cx='19.50' cy='-33.77' r='39'/%3E%3Ccircle cx='58.50' cy='33.77' r='39'/%3E%3Ccircle cx='78.00' cy='0.00' r='39'/%3E%3Ccircle cx='0.00' cy='67.55' r='39'/%3E%3Ccircle cx='39.00' cy='67.55' r='39'/%3E%3Ccircle cx='-58.50' cy='33.77' r='39'/%3E%3Ccircle cx='-39.00' cy='67.55' r='39'/%3E%3Ccircle cx='-58.50' cy='-33.77' r='39'/%3E%3Ccircle cx='-78.00' cy='0.00' r='39'/%3E%3Ccircle cx='-0.00' cy='-67.55' r='39'/%3E%3Ccircle cx='-39.00' cy='-67.55' r='39'/%3E%3Ccircle cx='58.50' cy='-33.77' r='39'/%3E%3Ccircle cx='39.00' cy='-67.55' r='39'/%3E%3Ccircle r='117'/%3E%3Ccircle r='121' stroke-width='.4'/%3E%3C/svg%3E") center/contain no-repeat;opacity:.3;pointer-events:none;filter:drop-shadow(0 0 6px #e8bc6440)}
