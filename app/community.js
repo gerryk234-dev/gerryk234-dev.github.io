@@ -3,7 +3,7 @@
 'use strict';
 const dayIndex = () => Math.floor(now() / DAY);
 const pickDay = (arr, k = 0) => arr[((dayIndex() + k) % arr.length + arr.length) % arr.length];
-const centreTabs = () => subnav([['/centre', '✦ Centre'], ['/centre/today', '☀ Today'], ['/centre/feed', '♥ Feed'], ['/centre/methods', '🌬 Methods'], ['/community', '◎ Groups']]);
+const centreTabs = () => (me() && !isStaff(me())) ? portalNav() : subnav([['/centre', '✦ Centre'], ['/centre/today', '☀ Today'], ['/centre/feed', '♥ Feed'], ['/centre/methods', '🌬 Methods'], ['/community', '◎ Groups']]);
 const ytSearch = q => `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`;
 
 function dailyMessage() { const [text, by] = pickDay(DAILY.messages); return { text, by }; }

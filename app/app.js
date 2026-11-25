@@ -142,7 +142,7 @@ function progressChart(snaps) {
 const snapsOf = u => publishedTests(u).map((t, i) => ({ label: `Test ${i + 1}`, minerals: t.minerals }));
 
 /* ───────────────────────── layout ───────────────────────── */
-const logo = (cls = '') => `<img src="brand/logo.svg" alt="DELTA logo" width="88" height="88" class="logo ${cls}">`;
+const logo = (cls = '') => `<img src="brand/logo-emblem.png" alt="DELTA logo" width="96" height="88" class="logo ${cls}">`;
 const isStaff = u => u && u.role !== 'member';
 function header() {
   const u = me(); const path = location.hash.slice(1) || '/';
@@ -153,7 +153,7 @@ function header() {
     <button class="menu-btn" data-act="menu" aria-expanded="false" aria-controls="mainnav" aria-label="Open menu"><span></span></button>
     <nav class="main" id="mainnav" aria-label="Main"><div>
       ${chapterNav(path.split('?')[0])}<span class="nav-sp"></span>
-      ${u ? (isStaff(u) ? a('/admin', 'Admin', 'strong') : '') + a('/portal', 'My Portal', 'strong') : a('/login', 'Sign in') + a('/register', 'Sign up', 'strong')}
+      ${u ? (isStaff(u) ? a('/admin', 'Admin', 'strong') : '') + a('/centre/feed', 'My DELTA', 'strong') : a('/login', 'Sign in') + a('/register', 'Sign up', 'strong')}
     </div></nav></div></header>`;
 }
 function footer() {
@@ -179,7 +179,10 @@ function subnav(items, counts = {}) {
   const path = location.hash.slice(1);
   return `<nav class="subnav" aria-label="Section"><div class="container">${items.map(([to, l]) => `<a href="#${to}" class="${path === to ? 'active' : ''}">${l}${counts[to] ? `<span class="count">${counts[to]}</span>` : ''}</a>`).join('')}</div></nav>`;
 }
-const portalNav = () => subnav([['/portal', 'Overview'], ['/report', 'My report'], ['/learn', 'Six pillars'], ['/awakening', 'Awakening'], ['/podcast', 'Podcast'], ['/mineral-man', 'Mineral Man'], ['/centre', 'Community Centre'], ['/laughology', 'LAUGHOLOGY'], ['/partners', 'Partners'], ['/account', 'Account']], { '/account': me()?.inbox.filter(n => !n.read).length });
+/* Member menu: the same row of page options at the top of every member page, starting with the Feed. */
+const MEMBER_PAGES = [['/centre/feed', '♥', 'Feed'], ['/centre/today', '☀', 'Today'], ['/portal', '◉', 'My DELTA'], ['/report', '◎', 'My report'], ['/learn', '△', 'Learn'], ['/centre/methods', '✦', 'Methods'], ['/centre', '◇', 'Community'], ['/mineral-man', '▷', 'Mineral Man'], ['/podcast', '♪', 'Podcast'], ['/laughology', '☺', 'Laughology'], ['/account', '⚙', 'Account']];
+const portalNav = () => { const path = location.hash.slice(1).split('?')[0], unread = me()?.inbox.filter(n => !n.read).length;
+  return `<nav class="member-bar" aria-label="My DELTA"><div class="container">${MEMBER_PAGES.map(([to, ic, l]) => `<a href="#${to}" class="${path === to ? 'active' : ''}"${path === to ? ' aria-current="page"' : ''}><span class="mb-ico" aria-hidden="true">${ic}</span>${l}${to === '/account' && unread ? `<span class="count">${unread}</span>` : ''}</a>`).join('')}</div></nav>`; };
 function adminNav() {
   const tests = members().flatMap(u => u.tests.map(t => ({ u, t })));
   const c = {
@@ -382,7 +385,7 @@ R['/login'] = (q = {}) => {
     ${q.expired ? '<p class="sm b-warn mt4 center">That sign-in link has expired or was already used. Request a new one below.</p>' : ''}
     ${q.error ? `<p class="sm b-warn mt4 center">${{ notconfigured: 'That sign-in option isn\'t connected yet — please use email for now.', cancelled: 'Sign-in was cancelled.', expired: 'That sign-in attempt expired — please try again.', failed: 'We couldn\'t verify that sign-in. Please try again or use email.', link: 'There is already a DELTA account with that email. Please sign in with an email link first — for your security we don\'t merge work or school Microsoft accounts automatically.' }[q.error] || 'Sign-in failed.'}</p>` : ''}
     ${u ? '' : `<div class="mt6">${socialButtons()}</div><div class="or">or use your email</div>`}
-    ${u ? `<p class="sm mt6 center">Signed in as <b>${esc(u.name)}</b>. <a href="#${isStaff(u) ? '/admin' : '/portal'}">Continue</a> · <button class="linkbtn" data-act="logout">Sign out</button></p>` : ''}
+    ${u ? `<p class="sm mt6 center">Signed in as <b>${esc(u.name)}</b>. <a href="#${isStaff(u) ? '/admin' : '/centre/feed'}">Continue</a> · <button class="linkbtn" data-act="logout">Sign out</button></p>` : ''}
     ${loginSent ? `<div class="card hl mt6 sm"><b>Check your email.</b> If <b>${esc(loginSent)}</b> has a DELTA account, a sign-in link is on its way. It works once and expires in 20 minutes.${S.demo ? (STATIC ? ' <a href="#/dev/mailbox">Open the dev mailbox</a>.' : ' <a href="/dev/mailbox" target="_blank" rel="noopener">Open the dev mailbox</a>.') : ''}</div>`
       : `<form class="stack" data-form="login-email"><label class="f"><span>Email address</span><input type="email" name="email" required autocomplete="email"></label><button class="btn block">Email me a sign-in link</button><p class="xs muted center">No password needed. New here? <a href="#/register">Create an account</a>.</p></form>`}
     ${S.demo && S.personas.length ? `<hr class="sep"><p class="xs muted">Demo mode: sign in instantly as a persona to see each stage of the journey.</p>
@@ -814,6 +817,7 @@ function render() {
   else html = R[path] ? R[path](q, parts) : notFound();
   } catch (e) { console.error(e); html = page(`<div class="card hl"><h1>This page didn’t load</h1><p class="muted mt3">Something went wrong showing this page. The rest of DELTA still works.</p><div class="flex mt6"><a class="btn" href="#/">Go to the homepage</a>${STATIC ? '<button class="btn ghost" data-act="start-fresh">Start the demo fresh</button>' : ''}</div><p class="xs muted mt4">Details: ${esc(e.message)}</p></div>`, 'narrow'); }
   document.body.dataset.route = parts[0] || 'home';
+  document.body.classList.toggle('signed-in', !!me());
   document.getElementById('app').innerHTML = responsiveImages(`<a class="skip" href="#main" data-act="skip">Skip to content</a>${demobar()}${header()}${path.startsWith('/admin') ? '' : journeyBar(path)}${html}${path.startsWith('/admin') || path === '/' ? '' : nextSteps(path)}${footer()}${aiWidget(path)}`);
   document.title = 'DELTA — Awakening Human Potential';
   for (const id of ['chatlog', 'ailog']) { const log = document.getElementById(id); if (log) log.scrollTop = log.scrollHeight; }

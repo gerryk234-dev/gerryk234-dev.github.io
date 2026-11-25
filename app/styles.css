@@ -1141,3 +1141,82 @@ body[data-route="home"] .life-bg .lb-fol { opacity: .34; }
 .landing-img, .landing-art .landing-img { -webkit-mask-image: radial-gradient(closest-side, #000 72%, transparent 100%) !important; mask-image: radial-gradient(closest-side, #000 72%, transparent 100%) !important; }
 .landing-art::before, .landing-art::after { -webkit-mask-image: radial-gradient(closest-side, #000 60%, transparent 100%); mask-image: radial-gradient(closest-side, #000 60%, transparent 100%); }
 @media (max-width: 860px) { body[data-route="home"] .life-bg .lb-fol { opacity: .15; } }
+
+
+/* ═════════════ FRONT-END THEME — the platform follows the public website's design ═════════════
+   Navy ink + gold, Georgia serif titles, Inter text, gold pill buttons, quiet cards,
+   the gold Ankh-triangle logo, and the Flower of Life behind page titles. Static: no moving backgrounds. */
+:root { --bg: #050b18; --ink: #050b18; --fg: #f5f2ed; --muted: #c3cbda; --gold: #e6bc6c; --gold-soft: #efcf93; --surface: #101a2b; --border: #c7a36a33;
+  --display: Inter, Arial, sans-serif; --font: Inter, Arial, sans-serif; --metal: linear-gradient(#e6bc6c, #e6bc6c); }
+html, body { background: #050b18; }
+body { color: var(--fg); font-family: var(--font); }
+body::before, body::after, .life-bg { display: none !important; }
+/* titles */
+h1, h2, h3 { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; letter-spacing: -.01em; }
+main h1 { font-size: clamp(2.4rem, 6vw, 4.2rem); line-height: 1.1; color: #f9f4ea; }
+main h2 { font-size: clamp(1.6rem, 3.4vw, 2.4rem); }
+h3, .card h3 { font-family: var(--font); font-weight: 700; letter-spacing: 0; }
+.metal, .card h3.gold, .kind-phrase, .stat b, .core span { background: none !important; -webkit-background-clip: border-box !important; background-clip: border-box !important; color: var(--gold) !important; -webkit-text-fill-color: currentColor; animation: none !important; }
+.kicker, .eyebrow { font-family: var(--font); letter-spacing: .3em; font-size: .72rem; color: var(--gold); text-transform: uppercase; font-weight: 400; }
+.gold { color: var(--gold); }
+main h1::after, h2.lined::after, h3.lined::after, main.centre h2::after { display: none !important; }
+.tw { animation: none !important; opacity: 1 !important; transform: none !important; filter: none !important; }
+/* the Flower of Life behind the page title, as on the website's inner pages */
+main.page, main.centre { position: relative; isolation: isolate; }
+main.page::before, main.centre::before { content: ""; position: absolute; z-index: -1; left: 50%; top: 2.5rem; width: min(560px, 92vw); aspect-ratio: 1; transform: translateX(-50%);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-125 -125 250 250' fill='none' stroke='%23e9c47b' stroke-width='.7'%3E%3Ccircle cx='0.00' cy='0.00' r='39'/%3E%3Ccircle cx='39.00' cy='0.00' r='39'/%3E%3Ccircle cx='19.50' cy='33.77' r='39'/%3E%3Ccircle cx='-19.50' cy='33.77' r='39'/%3E%3Ccircle cx='-39.00' cy='0.00' r='39'/%3E%3Ccircle cx='-19.50' cy='-33.77' r='39'/%3E%3Ccircle cx='19.50' cy='-33.77' r='39'/%3E%3Ccircle cx='58.50' cy='33.77' r='39'/%3E%3Ccircle cx='78.00' cy='0.00' r='39'/%3E%3Ccircle cx='0.00' cy='67.55' r='39'/%3E%3Ccircle cx='39.00' cy='67.55' r='39'/%3E%3Ccircle cx='-58.50' cy='33.77' r='39'/%3E%3Ccircle cx='-39.00' cy='67.55' r='39'/%3E%3Ccircle cx='-58.50' cy='-33.77' r='39'/%3E%3Ccircle cx='-78.00' cy='0.00' r='39'/%3E%3Ccircle cx='-0.00' cy='-67.55' r='39'/%3E%3Ccircle cx='-39.00' cy='-67.55' r='39'/%3E%3Ccircle cx='58.50' cy='-33.77' r='39'/%3E%3Ccircle cx='39.00' cy='-67.55' r='39'/%3E%3Ccircle r='117'/%3E%3Ccircle r='121' stroke-width='.4'/%3E%3C/svg%3E") center/contain no-repeat; opacity: .16; pointer-events: none; }
+main.page::after { content: ""; position: absolute; z-index: -1; left: 50%; top: 18rem; width: min(700px, 80%); height: 220px; transform: translateX(-50%); border-radius: 50%; background: #d6a75918; filter: blur(60px); pointer-events: none; }
+/* header like the website: emblem + DELTA, plain links, gold pill */
+header.site { background: #050b18ed !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; border-bottom: 1px solid #c69d4c44; }
+header.site::after { display: none; }
+.logo, footer.site .logo { width: 3.6rem !important; height: 3.3rem !important; border-radius: 0 !important; object-fit: contain; box-shadow: none !important; animation: none !important; filter: drop-shadow(0 0 10px #e9ad4b60); background: none; }
+.logo-live::after { display: none !important; }
+.brand .t1 { font-family: var(--font); font-weight: 800; letter-spacing: .2em; color: var(--gold); background: none; -webkit-text-fill-color: currentColor; font-size: 1.45rem; }
+header.site .brand .t2 { display: none; }
+nav.main a { font-family: var(--font) !important; font-size: .88rem !important; color: #e7e9ed; font-weight: 400; }
+nav.main a:hover, nav.main a.active { color: var(--gold); }
+nav.main a.active::after { display: none; }
+nav.main a.strong { background: var(--gold); color: #0a1020 !important; padding: .55rem 1.1rem; border-radius: 30px; font-weight: 700; }
+.nav-item .drop { background: #080e1d; }
+/* buttons */
+.btn { font-family: var(--font); font-weight: 700; border-radius: 30px; background: var(--gold) !important; color: #101626 !important; border: 1px solid var(--gold); box-shadow: none !important; text-shadow: none; animation: none !important; }
+.btn:hover { transform: translateY(-2px); filter: none; }
+.btn::before, .btn::after { display: none !important; }
+.btn.ghost { background: transparent !important; color: #f4dbad !important; border-color: #b8975f; }
+.btn.social.google { background: #fff !important; color: #1f1f1f !important; border-color: #fff; } .btn.social.apple { background: #000 !important; color: #fff !important; border-color: #ffffff40; } .btn.social.microsoft { background: #fff !important; color: #1f1f1f !important; }
+/* cards: quiet panels with a fine gold line; no travelling light */
+.card, .inner, details, .kpi, .session, .tile, .method, .ns-card, .feed-item { background: linear-gradient(150deg, #142035, #0c1424) !important; border: 1px solid #c7a36a33 !important; border-radius: 14px; box-shadow: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+.card::after, .session::after, .tile::after, .method::after, .ns-card::after, main .card::after { display: none !important; content: none !important; }
+.card.hl { border-left: 3px solid #c8a362 !important; }
+.feed-item.update { border-color: #c7a36a77 !important; }
+.f-av { background: var(--gold); box-shadow: none; }
+/* member menu above the feed and every member page */
+.member-bar { position: sticky; top: 0; z-index: 30; background: #080e1df2; border-bottom: 1px solid #c7a36a33; }
+.member-bar .container { display: flex; gap: .45rem; overflow-x: auto; scrollbar-width: none; padding-top: .75rem; padding-bottom: .75rem; }
+.member-bar .container::-webkit-scrollbar { display: none; }
+.member-bar a { flex: none; display: inline-flex; align-items: center; gap: .4rem; padding: .5rem .95rem; border-radius: 30px; border: 1px solid #c7a36a40; color: #e7e9ed; text-decoration: none; font: 500 .86rem var(--font); white-space: nowrap; transition: border-color .2s, background .2s; }
+.member-bar a:hover { border-color: var(--gold); color: #fff; }
+.member-bar a.active { background: var(--gold); border-color: var(--gold); color: #101626; font-weight: 700; }
+.mb-ico { font-size: .95em; opacity: .9; }
+.member-bar .count { background: #c0392b; color: #fff; border-radius: 999px; font-size: .65rem; padding: 0 .35rem; margin-left: .15rem; }
+@media (max-width: 900px) { header.site { position: sticky; top: 0; z-index: 40; } .member-bar { top: 79px; } }
+/* "you are here" bar and others, quieter */
+.journey-bar { background: #080e1d; }
+.jb-dot { background: #0a1324; border-color: #a98a55; }
+.jb-steps li.now .jb-dot { background: var(--gold); color: #101626; box-shadow: none; animation: none; }
+.jb-line i { display: none; } .jb-line b { background: var(--gold); }
+footer.site { background: #050b18; border-top: 1px solid #b18d4a33; }
+footer.site::before, .foot-tree { display: none; }
+footer.site .base::before { color: var(--gold); background: none; -webkit-text-fill-color: currentColor; }
+a { color: var(--gold-soft); }
+.demo-pill > summary { background: #080e1d; }
+.boot img { border-radius: 0; width: 5rem; height: auto; }
+nav.main a.strong { -webkit-text-fill-color: currentColor; background-clip: border-box; -webkit-background-clip: border-box; }
+
+main h2::after, main h3::after, .card h2::after { display: none !important; }
+.fab { background: var(--gold) !important; color: #101626; box-shadow: 0 8px 24px #0008; animation: none !important; }
+.fab.on { background: #080e1d !important; color: var(--gold); border: 1px solid var(--gold); }
+/* signed-in members use the member menu, so the "you are here" bar and Previous/Next are for visitors only */
+body.signed-in .journey-bar, body.signed-in .next-steps { display: none; }
+.jb-steps a, .crumbs { font-family: var(--font); }
+#main:focus, main:focus { outline: none; }
