@@ -6,7 +6,7 @@ const CHAPTERS = [
   { n: 1, id: 'home', name: 'Home', tag: 'Start here', icon: '⌂', desc: 'What DELTA is, today in the community, and where to go next.', pages: [['/', 'Home'], ['/explore', 'Explore DELTA']] },
   { n: 2, id: 'understand', name: 'Understand', tag: 'How DELTA works', icon: '◎', desc: 'One purchase: your mineral test, a chart you can read, and six months of access.',
     pages: [['/how-it-works', 'How it works'], ['/analysis', 'Analysis — your test'], ['/intelligence', 'Intelligence — your report']] },
-  { n: 3, id: 'method', name: 'The Method', tag: 'Six pillars & Awakening', icon: '△', desc: 'BODY, ENVIRONMENT, GROUND, MOVE, RELEASE and REST — and Awakening through them all.',
+  { n: 3, id: 'method', name: 'The Method', tag: 'Six pillars & Awakening', icon: '△', desc: 'BODY, SPACE, GROUND, MOVE, RELEASE and REST — and Awakening through them all.',
     pages: [['/pillars', 'The six pillars'], ...PILLARS.map(p => [`/pillars/${p.id}`, `${p.n}. ${p.name[0] + p.name.slice(1).toLowerCase()}`, 'sub']), ['/awakening', 'Awakening']] },
   { n: 4, id: 'community', name: 'Community', tag: 'Practise together', icon: '♡', desc: 'The Community Centre: today’s plan, the feed, guided methods, practice rooms and laughter.',
     pages: [['/centre', 'Community Centre'], ['/centre/today', 'Today'], ['/centre/feed', 'Community feed'], ['/centre/methods', 'Guided methods'], ...PRACTICES.map(p => [`/centre/${p.id}`, p.name, 'sub']), ['/laughology', 'LAUGHOLOGY']] },

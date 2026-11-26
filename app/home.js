@@ -31,7 +31,7 @@ R['/explore'] = () => {
 
   <section class="band living-band"><div class="container grid md2 home-orbit" style="align-items:center">
     <div><div class="kicker">The Method · The Community Centre</div><h2 class="mt3 big-h">Six pillars. Six practices. <span class="metal">One living centre.</span></h2>
-      <p class="lg muted mt4">Meditation, yoga, tai chi, mindfulness, laughter and comedy circle the six DELTA pillars — BODY, ENVIRONMENT, GROUND, MOVE, RELEASE and REST. Tap any circle to step inside.</p>
+      <p class="lg muted mt4">Meditation, yoga, tai chi, mindfulness, laughter and comedy circle the six DELTA pillars — BODY, SPACE, GROUND, MOVE, RELEASE and REST. Tap any circle to step inside.</p>
       <div class="flex mt6"><a class="btn" href="#/centre">Enter the Community Centre</a><a class="btn ghost" href="#/centre/methods">✦ ${METHODS.length} guided methods</a></div></div>
     ${centreOrbit()}
   </div></section>
